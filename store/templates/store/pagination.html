@@ -1,0 +1,47 @@
+{% load my_templatetags %}
+
+<ul class="pagination">
+    {% if products.has_previous %}
+        {% if products.number|add:'-3' > 1 %}
+            <li class="pagination__item">
+                <a class="pagination__link" href="{% relative_url 1 'page' request.GET.urlencode %}">1</a>
+            </li>
+        {% endif %}
+        {% if products.number|add:'-3' >= 3 %}
+            <li class="pagination__item pagination__item--dots">
+                <a href="{% relative_url page.previous_page_number|add:'-3' 'page' request.GET.urlencode %}">
+                    <span class="pagination__link">• • •</span>
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+    {% if products.paginator.page_range|length > 1 %}
+        {% for i in products.paginator.page_range %}
+            {% if products.number == i %}
+                <li class="pagination__item active">
+                    <a class="pagination__link" href="#">{{ i }}</a>
+                </li>
+            {% elif i > products.number|add:'-4' and i < page.number|add:'4' %}
+                <li class="pagination__item">
+                    <a class="pagination__link" href="{% relative_url i 'page' request.GET.urlencode %}">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if products.has_next %}
+        {% if products.number|add:'4' < products.paginator.num_pages %}
+            <li class="pagination__item pagination__item--dots">
+                <a href="{% relative_url products.next_page_number|add:'3' 'page' request.GET.urlencode %}">
+                    <span class="pagination__link">• • •</span>
+                </a>
+            </li>
+        {% endif %}
+        {% if products.number|add:'3' < products.paginator.num_pages %}
+            <li class="pagination__item">
+                <a class="pagination__link" href="{% relative_url products.paginator.num_pages 'page' request.GET.urlencode %}">
+                    {{ products.paginator.num_pages }}
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+</ul>

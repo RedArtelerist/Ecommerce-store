@@ -1,0 +1,236 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+    <div id="slides-shop" class="cover-slides">
+        <ul class="slides-container">
+            <li class="text-left">
+                <img src="{% static 'images/banner-1.webp' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-center">
+                <img src="{% static 'images/banner-2.jpeg' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="text-right">
+                <img src="{% static 'images/banner-3.jpg' %}" alt="">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="m-b-20"><strong>Welcome To <br> Thewayshop</strong></h1>
+                            <p class="m-b-40">See how your users experience your website in realtime or view <br> trends to see any changes in performance over time.</p>
+                            <p><a class="btn hvr-hover" href="#">Shop New</a></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="slides-navigation">
+            <a href="#" class="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            <a href="#" class="prev"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
+    <section id="aa-promo">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="aa-promo-area">
+                        <div class="row">
+                            <!-- promo left -->
+                            <div class="col-md-5 no-padding">
+                                <div class="aa-promo-left">
+                                    <div class="aa-promo-banner">
+                                        <img src="{% static 'images/desktops.jpg' %}" alt="img">
+                                        <div class="aa-prom-content">
+                                            <h4 style="margin-top: 15px"><a href="/category/computers">Computers</a></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- promo right -->
+                            <div class="col-md-7 no-padding">
+                                <div class="aa-promo-right">
+                                    <div class="aa-single-promo-right">
+                                        <div class="aa-promo-banner">
+                                            <img src="{% static 'images/smartphones.jpeg' %}" alt="img">
+                                            <div class="aa-prom-content">
+                                                <h4 style="margin-top: 12px"><a href="/category/smartphones">Smartphones</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="aa-single-promo-right">
+                                        <div class="aa-promo-banner">
+                                            <img src="{% static 'images/laptops.jpg' %}" alt="img">
+                                            <div class="aa-prom-content">
+                                                <h4 style="margin-top: 12px"><a href="/category/laptops">Laptops</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="aa-single-promo-right">
+                                        <div class="aa-promo-banner">
+                                            <img src="{% static 'images/headphones.jpg' %}" alt="img">
+                                            <div class="aa-prom-content">
+                                                <h4 style="margin-top: 12px"><a href="/category/headphones">Headphones</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="aa-single-promo-right">
+                                        <div class="aa-promo-banner">
+                                            <img src="{% static 'images/tablets.jpg' %}" alt="img">
+                                            <div class="aa-prom-content">
+                                                <h4 style="margin-top: 12px"><a href="/category/tablets">Tablets</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row my-5">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Product with discounts</h1>
+                </div>
+                <div class="featured-products-box owl-carousel owl-theme">
+                    {% for product in discounts %}
+                        <div class="item">
+                            <div class="products-single fix">
+                                <div class="box-img-hover">
+                                     {% if product.discount %}
+                                        <div class="type-lb">
+                                            <p class="sale">-{{ product.discount }}%</p>
+                                        </div>
+                                    {% endif %}
+                                    <img src="{{ product.imageURL }}" class="img-fluid" alt="Image">
+                                    <div class="mask-icon">
+                                        <ul>
+                                            <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="why-text" style="height: 100px">
+                                    <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                                    {% if product.discount %}
+                                        <div class="price">
+                                            <h5 class="old-price">₴{{ product.price }}</h5>
+                                            <h5 class="discount-price">₴{{ product.discount_price }}</h5>
+                                        </div>
+                                    {% else %}
+                                        <h5 style="font-weight: bold;">₴{{ product.price }}</h5>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col-lg-12">
+                <div class="title-all text-center">
+                    <h1>Best seller</h1>
+                </div>
+                <div class="featured-products-box owl-carousel owl-theme">
+                    {% for product in best_seller %}
+                        <div class="item">
+                            <div class="products-single fix">
+                                <div class="box-img-hover">
+                                    {% if product.discount %}
+                                        <div class="type-lb">
+                                            <p class="sale">-{{ product.discount }}%</p>
+                                        </div>
+                                    {% endif %}
+                                    <img src="{{ product.imageURL }}" class="img-fluid" style="height: 277.5px" alt="Image">
+                                    <div class="mask-icon">
+                                        <ul>
+                                            <li>
+                                                <a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist">
+                                                    <i class="far fa-heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="why-text">
+                                    <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                                    {% if product.discount %}
+                                        <div class="price">
+                                            <h5 class="old-price">₴{{ product.price }}</h5>
+                                            <h5 class="discount-price">₴{{ product.discount_price }}</h5>
+                                        </div>
+                                    {% else %}
+                                        <h5 style="font-weight: bold;">₴{{ product.price }}</h5>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="brand-carousel section-padding owl-carousel">
+            {% for company in companies %}
+             <div class="single-logo">
+                 <a href="{{ company.get_absolute_url }}">
+                     <img src="{{ company.imageURL}}" alt="">
+                 </a>
+             </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $('.brand-carousel').owlCarousel({
+            loop:true,
+            margin:10,
+            autoplay:true,
+            delay: 1000,
+            responsive:{
+                0:{
+                    items:1
+                },
+                600:{
+                    items:3
+                },
+                1000:{
+                    items:5
+                }
+            }
+        })
+    </script>
+{% endblock %}
