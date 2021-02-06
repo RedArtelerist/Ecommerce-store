@@ -21,12 +21,71 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/main/custom.css' %}">
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        //const csrftoken = getToken('csrftoken');
+
+    </script>
+
+    <script type="text/javascript">
+    $(function(){
+        var langs = ["Java", "JavaScript", "VisualBasic", "PHP", "Pascal"] ;
+        $('#search').autocomplete({
+            source: "/ajax_calls/search/",
+            minLength: 4,
+            open: function(){
+                setTimeout(function () {
+                    $('.ui-autocomplete').css('z-index', 99);
+                }, 0);
+            }
+        });
+
+    });
+    </script>
 </head>
 <body>
 
@@ -65,6 +124,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <div class="custom-select-box">
                         <select id="basic" class="selectpicker show-tick form-control" data-placeholder="$ USD">
@@ -99,7 +159,7 @@
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fa fa-bars"></i>
                 </button>
-                    <a class="navbar-brand" href="{% url 'home'  %}"><img src="{% static 'images/icons/logo.png' %}" class="logo" alt=""></a>
+                    <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/icons/logo.png' %}" class="logo" alt=""></a>
                 </div>
                 <!-- End Header Navigation -->
 
@@ -114,7 +174,7 @@
                             {% load mptt_tags %}
                             <ul class="dropdown-menu catalog">
                                 {% recursetree categories%}
-                                    <li><a href="{{ node.get_absolute_url }}" {% if not node.is_leaf_node %} data-toggle="dropdown"{% endif %}>
+                                    <li><a href="{{ node.get_absolute_url }}">
                                         <span style="flex: 1 1 auto;">{{ node.name }}</span>{% if not node.is_leaf_node %}
                                             <span>&nbsp;</span><span class="fa fa-angle-right"></span>{% endif %}
                                         </a>
@@ -128,72 +188,6 @@
                             </ul>
                         </li>
 
-                        <li class="dropdown megamenu-fw">
-                            <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">Product</a>
-                            <ul class="dropdown-menu megamenu-content" role="menu">
-                                <li>
-                                    <div class="row">
-
-                                        <div class="col-menu col-md-3">
-                                            <h6 class="title">Top</h6>
-                                            <ul class="menu-col">
-                                                <li><a href="shop.html">Jackets</a></li>
-                                                <li><a href="shop.html">Shirts</a></li>
-                                                <li><a href="shop.html">Sweaters & Cardigans</a></li>
-                                                <li><a href="shop.html">T-shirts</a></li>
-                                            </ul>
-                                        </div>
-
-                                        <div class="col-menu col-md-3">
-                                            <h6 class="title">Bottom</h6>
-                                            <div class="content">
-                                                <ul class="menu-col">
-                                                    <li><a href="shop.html">Swimwear</a></li>
-                                                    <li><a href="shop.html">Skirts</a></li>
-                                                    <li><a href="shop.html">Jeans</a></li>
-                                                    <li><a href="shop.html">Trousers</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-menu col-md-3">
-                                            <h6 class="title">Clothing</h6>
-                                            <div class="content">
-                                                <ul class="menu-col">
-                                                    <li><a href="shop.html">Top Wear</a></li>
-                                                    <li><a href="shop.html">Party wear</a></li>
-                                                    <li><a href="shop.html">Bottom Wear</a></li>
-                                                    <li><a href="shop.html">Indian Wear</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-menu col-md-3">
-                                            <h6 class="title">Accessories</h6>
-                                            <div class="content">
-                                                <ul class="menu-col">
-                                                    <li><a href="shop.html">Bags</a></li>
-                                                    <li><a href="shop.html">Sunglasses</a></li>
-                                                    <li><a href="shop.html">Fragrances</a></li>
-                                                    <li><a href="shop.html">Wallets</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- end row -->
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">SHOP</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="cart.html">Cart</a></li>
-                                <li><a href="checkout.html">Checkout</a></li>
-                                <li><a href="my-account.html">My Account</a></li>
-                                <li><a href="wishlist.html">Wishlist</a></li>
-                                <li><a href="shop-detail.html">Shop Detail</a></li>
-                            </ul>
-                        </li>
                         <li class="nav-item"><a class="nav-link" href="service.html">Our Service</a></li>
                         <li class="nav-item"><a class="nav-link" href="contact-us.html">Contact Us</a></li>
                     </ul>
@@ -204,10 +198,24 @@
                 <div class="attr-nav">
                     <ul>
                         <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
-                        <li class="side-menu"><a href="#">
-						<i class="fa fa-shopping-bag"></i>
-                            <span class="badge">3</span>
-					</a></li>
+                        <li>
+                            <a href="{% url "wishlist:wishlist_detail" %}">
+                                <i class="fas fa-heart"></i>
+                                {% if user.is_authenticated %}
+                                    {% with total_items=wishlist|length %}
+                                        <span class="badge">{{ total_items }}</span>
+                                    {% endwith %}
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="side-menu">
+                            <a href="#">
+                                <i class="fa fa-shopping-bag"></i>
+                                {% with total_items=cart|length %}
+                                    <span class="badge">{{ total_items }}</span>
+                                {% endwith %}
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- End Atribute Navigation -->
@@ -217,25 +225,26 @@
                 <a href="#" class="close-side"><i class="fa fa-times"></i></a>
                 <li class="cart-box">
                     <ul class="cart-list">
-                        <li>
-                            <a href="#" class="photo"><img src="" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Delica omtantur </a></h6>
-                            <p>1x - <span class="price">$80.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Omnes ocurreret</a></h6>
-                            <p>1x - <span class="price">$60.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Agam facilisis</a></h6>
-                            <p>1x - <span class="price">$40.00</span></p>
-                        </li>
-                        <li class="total">
-                            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                            <span class="float-right"><strong>Total</strong>: $180.00</span>
-                        </li>
+                        {% if cart|length > 0 %}
+                            {% for item in cart %}
+                                {% with product=item.product %}
+                                    <li style="display: flex">
+                                        <a href="{{ product.get_absolute_url }}" class="photo"><img src="{{ product.imageURL}}" class="cart-thumb" alt="" /></a>
+                                        <div><h6><a href="{{ product.get_absolute_url }}">{{ product.name }} </a></h6>
+                                        <p style="display: flex">{{ item.quantity }}x - <span class="price">&nbsp;₴{{ item.total_price }}</span></p>
+                                        </div>
+                                    </li>
+                                {% endwith %}
+                            {% endfor %}
+
+                            <li class="total">
+                                <a href="{% url "cart:cart_detail" %}" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
+                                <span class="float-right"><strong>Total</strong>: ₴{{ cart.get_total_price }}</span>
+                            </li>
+                        {% else %}
+                            <img class="empty-cart" src="{% static 'images/icons/emptycart.png' %}" alt="empty-cart">
+                        {% endif %}
+
                     </ul>
                 </li>
             </div>
@@ -243,16 +252,17 @@
         </nav>
         <!-- End Navigation -->
     </header>
-
-    <div class="top-search">
-        <div class="container">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search">
-                <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+    <form action="{% url 'search_products' %}" method="get">
+        <div class="top-search">
+            <div class="container">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        <input id="search" type="text" class="form-control" name="query" placeholder="Search">
+                    <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 
     <main role="main">
         {% block content %}{% endblock %}
@@ -322,8 +332,10 @@
 
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
 
+
+    <script src="{% static 'js/cart/cart.js' %}"></script>
     <!-- ALL JS FILES -->
-    <script src="{% static 'js/main/jquery-3.2.1.min.js' %}"></script>
+    <!--<script src="{% static 'js/main/jquery-3.2.1.min.js' %}"></script>-->
     <script src="{% static 'js/main/popper.min.js' %}"></script>
     <script src="{% static 'js/main/bootstrap.min.js' %}"></script>
     <!-- ALL PLUGINS -->

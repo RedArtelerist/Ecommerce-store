@@ -194,5 +194,8 @@
 		cursorcolor: "#9b9b9c",
 	});
 
+	// Quantity
+
+
 }(jQuery));
 

@@ -2,9 +2,14 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.contrib import admin
 from django import forms
 from django.contrib.admin import SimpleListFilter
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.sessions.models import Session
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
 
+from EcommerceStore import settings
+from cart.cart import Cart
 from store.models import *
 
 
@@ -120,6 +125,28 @@ class ProductAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.image.url} width="100" style="max-height: 250px"')
 
     get_image.short_description = 'Image'
+
+    def save_model(self, request, obj, form, change):
+        product_id = str(obj.id)
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+
+        for session in sessions:
+            session_data = session.get_decoded()
+            cart = session_data.get('cart')
+
+            if cart and product_id in cart:
+                if cart[product_id]['quantity'] > obj.stock:
+                    cart[product_id]['quantity'] = obj.stock
+
+                if not obj.available:
+                    cart.pop(product_id, None)
+
+                session_data['cart'] = cart
+                encoded_data = SessionStore().encode(session_data)
+                session.session_data = encoded_data
+                session.save()
+
+        super(ProductAdmin, self).save_model(request, obj, form, change)
 
 
 @admin.register(ImageItem)

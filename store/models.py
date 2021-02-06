@@ -1,4 +1,6 @@
 import decimal
+
+from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.urls import reverse
 from mptt.fields import TreeForeignKey
@@ -24,14 +26,14 @@ class Category(MPTTModel):
     def __str__(self):
         return self.name
 
-    def __str__(self):
+    """def __str__(self):
         full_path = [self.name]
         k = self.parent
         while k is not None:
             full_path.append(k.name)
             k = k.parent
         return ' / '.join(full_path[::-1])
-
+    """
     @property
     def imageURL(self):
         try:
@@ -146,4 +148,26 @@ class ImageItem(models.Model):
         verbose_name = 'Image'
         verbose_name_plural = 'Product Gallery'
 
-#ДОБАВИТЬ В ЗАКАЗЕ ОТДЕЛЬНОЕ ПОЛЕ ДЛЯ ЦЕНЫ, ЧТОБЫ КОГДА ИЗМЕНЯЛАСЬ ЦЕНА ПРОДУКТА В ЗАКАЗЕ НЕ МЕНЯЛАСЬ ЦЕНА
+
+class Comment(models.Model):
+    STATUS = (
+        ('New', 'New'),
+        ('True', 'True'),
+        ('False', 'False'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    parent = models.ForeignKey('self', verbose_name="Parent", on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=STATUS, default='New')
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return 'Comment by {} on {}'.format(self.name, self.product)

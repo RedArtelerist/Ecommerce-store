@@ -1,0 +1,175 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block content %}
+    <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>Searching results: {{ query }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="shop-box-inner">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-sm-12 col-xs-12 sidebar-shop-left">
+                    <div class="product-categori">
+                        <div style="margin-top: 30%" class="filter-brand-left">
+                            <div class="title-left">
+                                <h3>Categories</h3>
+                            </div>
+
+                            <form id="search-filter" method="get">
+                                {{ filter.form.query }}
+                                <div class="brand-box">
+                                    {{ filter.form.category }}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-9 col-lg-9 col-sm-12 col-xs-12 shop-content-right">
+                    <div class="right-product-box">
+                        <div class="product-item-filter row">
+                            <div class="col-12 col-sm-8 text-center text-sm-left">
+                                <p>Showing all {{ count }} results</p>
+                            </div>
+                            <div class="col-12 col-sm-4 text-center text-sm-right">
+                                <ul class="nav nav-tabs ml-auto">
+                                    <li>
+                                        <a class="nav-link active" href="#grid-view" data-toggle="tab"> <i class="fa fa-th"></i> </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" href="#list-view" data-toggle="tab"> <i class="fa fa-list-ul"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% if products %}
+                        <div class="row product-categorie-box">
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
+                                    <div class="row">
+                                        {% for product in products %}
+                                        <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                            <div class="products-single fix {% if not product.available %}no-available{% endif %}">
+                                                <div class="box-img-hover">
+                                                    {% if product.discount %}
+                                                        <div class="type-lb">
+                                                            <p class="sale">-{{ product.discount }}%</p>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div class="image">
+                                                        <img src="{{ product.imageURL}}" class="img-fluid" alt="{{ product.name }}">
+                                                    </div>
+                                                    <div class="mask-icon">
+                                                        <ul>
+                                                            <li><a href="{{ product.get_absolute_url }}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                            <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                            <li><a href="{% url "wishlist:wishlist_add" product.id%}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                        </ul>
+                                                        {% if product.available %}
+                                                            <a data-product="{{product.id}}" data-action="add" class="cart update-cart" href="#">Add to Cart</a>
+                                                        {% else %}
+                                                            <a class="cart" href="#">Not available</a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                <div class="why-text">
+                                                    <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                                                    {% if product.discount %}
+                                                        <div class="price">
+                                                            <h5 class="old-price">₴{{ product.price }}</h5>
+                                                            <h5 class="discount-price">₴{{ product.discount_price }}</h5>
+                                                        </div>
+                                                    {% else %}
+                                                        <h5 style="font-weight: bold;">₴{{ product.price }}</h5>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane fade" id="list-view">
+                                    {% for product in products %}
+                                        <div class="list-view-box {% if not product.available %}no-available{% endif %}">
+                                            <div class="row">
+                                                <div class="col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                                                    <div class="products-single fix">
+                                                        <div class="box-img-hover">
+                                                            {% if product.discount %}
+                                                                <div class="type-lb">
+                                                                    <p class="sale">-{{ product.discount }}%</p>
+                                                                </div>
+                                                            {% endif %}
+                                                            <div class="image">
+                                                                <img src="{{ product.imageURL}}" class="img-fluid" alt="{{ product.name }}">
+                                                            </div>
+                                                            <div class="mask-icon">
+                                                                <ul>
+                                                                    <li><a href="{{ product.get_absolute_url }}" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                                                    <li><a href="{% url "wishlist:wishlist_add" product.id%}" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
+                                                    <div style="height: auto" class="why-text full-width">
+                                                        <h4><a style="color: black; margin-left: -20px" href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+                                                        {% if product.discount %}
+                                                            <h5> <del>₴{{ product.price }}</del> ₴{{ product.discount_price }}</h5>
+                                                        {% else %}
+                                                            <h5 style="color: black">₴{{ product.price }}</h5>
+                                                        {% endif %}
+                                                        <p>{{ product.shortSpecifications }}</p>
+                                                        {% if product.available %}
+                                                            <a data-product="{{product.id}}" data-action="add" class="btn hvr-hover update-cart" href="#">Add to Cart</a>
+                                                        {% else %}
+                                                            <a class="btn hvr-hover" href="#">Not available</a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                {% include "store/pagination.html" with page=products %}
+                            </div>
+                        </div>
+                        {% else %}
+                            <img style="position: relative;left: 20%" src="{% static 'images/no_products.png' %}" alt="no_products">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var labels = document.querySelectorAll("div.brand-box input");
+
+        for(var i = 0; i < labels.length; i++){
+            labels[i].addEventListener('click', function(){
+                var category = this.getAttribute("value");
+                console.log(category);
+
+                document.getElementById("search-filter").submit();
+            })
+        }
+    </script>
+{% endblock %}

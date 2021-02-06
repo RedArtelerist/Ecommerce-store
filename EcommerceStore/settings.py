@@ -34,8 +34,12 @@ INSTALLED_APPS = [
     'django_filters',
     'mptt',
 
-    'store',
+    'store.apps.StoreConfig',
+    'cart.apps.CartConfig',
+    'wishlist.apps.WishlistConfig'
 ]
+
+#SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -64,6 +68,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'store.context_processors.get_categories',
+                'cart.context_processors.cart',
+                'wishlist.context_processors.wishlist',
             ],
         },
     },
@@ -198,3 +205,6 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+CART_SESSION_ID = 'cart'
+WISHLIST_SESSION_ID = 'wishlist'

@@ -1,5 +1,5 @@
 import django_filters
-from django.db.models import Case, When, Value, F, ExpressionWrapper
+from django.db.models import Case, When, Value, F, ExpressionWrapper, Q
 from django.forms import *
 
 from store.models import *
@@ -13,6 +13,14 @@ def get_companies(request):
     companies = Product.objects.filter(category=category).values_list('company__slug', flat=True).distinct()
 
     return Company.objects.filter(slug__in=companies).order_by('name')
+
+
+def get_categories(request):
+    if request is None:
+        return Category.objects.none()
+
+    categories = request
+    return categories
 
 
 def get_years():
@@ -89,4 +97,24 @@ class ProductFilter(django_filters.FilterSet):
             preserved = -preserved
 
         queryset = queryset.filter(pk__in=pk_list).order_by(preserved)
+        return queryset
+
+
+class SearchProductFilter(django_filters.FilterSet):
+    query = django_filters.CharFilter(
+        field_name="name",
+        method="filter_by_name",
+        lookup_expr="icontains",
+        widget=HiddenInput()
+    )
+    category = django_filters.ModelMultipleChoiceFilter(
+        queryset=get_categories,
+        field_name="category__slug",
+        to_field_name="slug",
+        widget=CheckboxSelectMultiple(),
+        label="Category",
+        label_suffix="",
+    )
+
+    def filter_by_name(self, queryset, name, value):
         return queryset

@@ -12,6 +12,9 @@
                 <div class="col-lg-12">
                     <ul class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        {% for parent in product.category.get_ancestors %}
+                            <li class="breadcrumb-item"><a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a></li>
+                        {% endfor %}
                         <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
                         <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}?company={{ product.company.slug }}">{{ product.company.name }}</a></li>
                         <li class="breadcrumb-item active">{{ product.name }}</li>
@@ -70,28 +73,39 @@
                         {% else %}
                             <h5 style="font-weight: bold; font-size: 30px;">₴{{ product.price }}</h5>
                         {% endif %}
+                        {% if not product.available %}
+                            <div class="btn btn-secondary">Sorry product is not available now</div>
+                        {% endif %}
                         <p class="available-stock"><span> More than {{ product.stock }} available / <a href="#">{{ product.sales }} sold </a></span><p>
                         <h4>Short Specifications:</h4>
                         <p>{{ product.shortSpecifications}} </p>
-                        <ul>
-                            <li>
-                                <div class="form-group quantity-box">
-                                    <label class="control-label">Quantity</label>
-                                    <input class="form-control" value="0" min="0" max="20" type="number">
-                                </div>
-                            </li>
-                        </ul>
 
-                        <div class="price-box-bar">
-                            <div class="cart-and-bay-btn">
-                                <a class="btn hvr-hover" data-fancybox-close="" href="#">Buy New</a>
-                                <a class="btn hvr-hover" data-fancybox-close="" href="#">Add to cart</a>
-                            </div>
-                        </div>
+                        {% if product.available %}
+                            <form action="{% url "cart:cart_add" product.id %}" method="post">
+                                {% csrf_token %}
+                                <ul>
+                                    <li>
+                                        <div class="form-group quantity-box">
+                                            {{ cart_product_form }}
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <label></label>
+                                        <div class="price-box-bar">
+                                            <div class="cart-and-bay-btn">
+                                                <button class="btn hvr-hover" type="submit">Add to cart</button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </form>
+                        {% endif %}
 
                         <div class="add-to-btn">
                             <div class="add-comp">
-                                <a class="btn hvr-hover" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
+                                <a class="btn hvr-hover" href="{% url "wishlist:wishlist_add" product.id%}">
+                                    <i class="fas fa-heart"></i> Add to wishlist
+                                </a>
                                 <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
                             </div>
                         </div>
@@ -170,4 +184,17 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function() {
+            var stock = {{ product.stock }};
+            var max = stock > 10 ? 10 : {{ product.stock }};
+            $("input#id_quantity").attr({
+               "max" : max,
+               "min" : 1
+            });
+        });
+    </script>
 {% endblock %}
