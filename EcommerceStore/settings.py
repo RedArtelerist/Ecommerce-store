@@ -36,7 +36,9 @@ INSTALLED_APPS = [
 
     'store.apps.StoreConfig',
     'cart.apps.CartConfig',
-    'wishlist.apps.WishlistConfig'
+    'wishlist.apps.WishlistConfig',
+    'orders.apps.OrdersConfig',
+    'coupons.apps.CouponsConfig',
 ]
 
 #SESSION_ENGINE = "django.contrib.sessions.backends.cache"

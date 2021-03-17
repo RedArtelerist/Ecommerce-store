@@ -8,6 +8,7 @@ class UserCart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     modification_date = models.DateTimeField(auto_now=True)
     items_cart = JSONField()
+    coupon = models.PositiveIntegerField()
     items_wishlist = JSONField()
 
 

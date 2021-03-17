@@ -1,9 +1,14 @@
 import json
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import *
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template import loader
+from django.views import View
+from django.views.decorators.http import require_POST
 from cart.forms import CartAddProductForm
 from store.filter import ProductFilter, SearchProductFilter
+from store.forms import CommentForm, ReviewForm
 from store.models import *
 from store.utils import get_products_by_filter_and_pagination
 
@@ -80,9 +85,26 @@ def get_price(request, queryset):
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug)
     cart_product_form = CartAddProductForm()
+
+    per_page = 3
+    comments = product.comments()
+    paginator = Paginator(comments, per_page)
+    page = request.GET.get('page')
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        comments = paginator.page(1)
+    except EmptyPage:
+        if request.is_ajax():
+            return HttpResponse('')
+        comments = paginator.page(paginator.num_pages)
+    if request.is_ajax():
+        return render(request, 'store/comments.html', {'comments': comments})
+
     return render(request, 'store/product_detail.html',
                   {'product': product,
-                   'cart_product_form': cart_product_form})
+                   'cart_product_form': cart_product_form,
+                   'comments': comments})
 
 
 def product_list_by_company(request, company_slug=None):
@@ -136,3 +158,116 @@ def autocompleteModel(request):
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
+
+
+@require_POST
+def add_comment(request, pk):
+    form = CommentForm(request.POST)
+    product = Product.objects.get(id=pk)
+    if form.is_valid():
+        form = form.save(commit=False)
+
+        if request.user.is_authenticated:
+            form.user = request.user
+
+        if request.POST.get("parent", None) and id == 0:
+            print(request.POST.get("parent"))
+            form.parent_id = int(request.POST.get("parent"))
+
+        form.product = product
+        form.save()
+
+    return redirect(product.get_absolute_url())
+
+
+@require_POST
+def delete_comment(request, id):
+    comment = Comment.objects.get(pk=id)
+    product = comment.product
+    comment.delete()
+    return redirect(product.get_absolute_url())
+
+
+@require_POST
+def add_review(request, pk):
+    if request.user.is_authenticated:
+        form = ReviewForm(request.POST)
+        product = Product.objects.get(id=pk)
+        if form.is_valid():
+            form = form.save(commit=False)
+
+            if request.user.is_authenticated:
+                form.user = request.user
+
+            form.product = product
+            form.save()
+
+        return redirect(product.get_absolute_url())
+    return redirect('/login/')
+
+
+@require_POST
+def delete_review(request, id):
+    review = Review.objects.get(pk=id)
+    product = review.product
+    review.delete()
+    return redirect(product.get_absolute_url())
+
+
+class VotesView(View):
+    model = None
+    vote_type = None
+
+    def post(self, request, pk):
+        obj = self.model.objects.get(pk=pk)
+        try:
+            like_dislike = LikeDislike.objects.get(content_type=ContentType.objects.get_for_model(obj),
+                                                   object_id=obj.id,
+                                                   user=request.user)
+            if like_dislike.vote is not self.vote_type:
+                like_dislike.vote = self.vote_type
+                like_dislike.save(update_fields=['vote'])
+                result = True
+            else:
+                like_dislike.delete()
+                result = False
+        except LikeDislike.DoesNotExist:
+            obj.votes.create(user=request.user, vote=self.vote_type)
+            result = True
+
+        return HttpResponse(
+            json.dumps({
+                "result": result,
+                "like_count": obj.votes.likes().count(),
+                "dislike_count": obj.votes.dislikes().count(),
+                "sum_rating": obj.votes.sum_rating()
+            }),
+            content_type="application/json"
+        )
+
+
+def lazy_load_posts(request, pk):
+    product = Product.objects.get(pk=pk)
+    page = request.POST.get('page')
+    comments = product.comments()
+
+    results_per_page = 3
+    paginator = Paginator(comments, results_per_page)
+    try:
+        comments = paginator.page(page)
+    except PageNotAnInteger:
+        comments = paginator.page(2)
+    except EmptyPage:
+        comments = paginator.page(paginator.num_pages)
+
+    if request.user.is_authenticated:
+        user = request.user
+    else:
+        user = None
+
+    # build a html posts list with the paginated posts
+    comments_html = loader.render_to_string('store/comments.html', {'comments': comments, 'user': user})
+
+    # package output data and return it as a JSON object
+    output_data = {'comments_html': comments_html, 'has_next': comments.has_next()}
+    return JsonResponse(output_data)

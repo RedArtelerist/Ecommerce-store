@@ -1,6 +1,7 @@
 import copy
 from decimal import Decimal
 from EcommerceStore import settings
+from coupons.models import Coupon
 from store.models import Product
 
 
@@ -13,6 +14,7 @@ class Cart(object):
             # save an empty cart in the session
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
+        self.coupon_id = self.session.get('coupon_id')
 
     def __iter__(self):
         """Перебор элементов в корзине и получение продуктов из базы данных."""
@@ -38,13 +40,25 @@ class Cart(object):
         return sum(Decimal(item['price']) * item['quantity'] for item in
                    self.cart.values())
 
+    @property
+    def coupon(self):
+        if self.coupon_id:
+            return Coupon.objects.get(id=self.coupon_id)
+        return None
+
+    def get_discount(self):
+        if self.coupon:
+            return round((self.coupon.discount / Decimal('100')) * self.get_total_price())
+        return Decimal('0')
+
+    def get_total_price_after_discount(self):
+        return round(self.get_total_price() - self.get_discount())
+
     def check_quantity(self, product):
         product_id = str(product.id)
-        stock = product.stock
-        stock = 10 if stock > 10 else stock
 
-        if self.cart[product_id]['quantity'] > stock:
-            self.cart[product_id]['quantity'] = stock
+        if self.cart[product_id]['quantity'] > 5:
+            self.cart[product_id]['quantity'] = 5
             self.save()
 
     def add(self, product, quantity=1, price=None, update_quantity=False):
@@ -93,4 +107,5 @@ class Cart(object):
     def clear(self):
         # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
+        #del self.session['coupon_id']
         self.session.modified = True

@@ -7,9 +7,11 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('', include('store.urls')),
     url(r'^wishlist/', include(('wishlist.urls', 'wishlist'), namespace='wishlist')),
     url(r'^cart/', include(('cart.urls', 'cart'), namespace='cart')),
-    path('', include('store.urls')),
+    url(r'^order/', include(('orders.urls', 'orders'), namespace='orders')),
+    url(r'^coupons/', include(('coupons.urls', 'coupons'), namespace='coupons')),
 
 ]
 

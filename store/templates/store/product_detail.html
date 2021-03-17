@@ -1,4 +1,6 @@
 {% extends 'store/base.html' %}
+{% load i18n %}
+{% load my_templatetags %}
 {% load static %}
 
 {% block title %}
@@ -76,7 +78,18 @@
                         {% if not product.available %}
                             <div class="btn btn-secondary">Sorry product is not available now</div>
                         {% endif %}
-                        <p class="available-stock"><span> More than {{ product.stock }} available / <a href="#">{{ product.sales }} sold </a></span><p>
+
+                        <div style="font-size: 1.5em" class="product-rating">
+                            <i class="text-warning {% if product.rate < 1 %}far{% else %}fas{% endif %} fa-star"></i>
+                            <i class="text-warning {% if product.rate < 2 %}far{% else %}fas{% endif %} fa-star"></i>
+                            <i class="text-warning {% if product.rate < 3 %}far{% else %}fas{% endif %} fa-star"></i>
+                            <i class="text-warning {% if product.rate < 4 %}far{% else %}fas{% endif %} fa-star"></i>
+                            <i class="text-warning {% if product.rate < 5 %}far{% else %}fas{% endif %} fa-star"></i>
+                            {{ product.rate |stringformat:".2f"}}
+                        </div>
+
+                        <p class="available-stock"><span><a href="#">{{ product.sales }} sold </a></span><p>
+
                         <h4>Short Specifications:</h4>
                         <p>{{ product.shortSpecifications}} </p>
 
@@ -106,7 +119,6 @@
                                 <a class="btn hvr-hover" href="{% url "wishlist:wishlist_add" product.id%}">
                                     <i class="fas fa-heart"></i> Add to wishlist
                                 </a>
-                                <a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
                             </div>
                         </div>
                     </div>
@@ -125,7 +137,14 @@
                                     <a class="nav-link" data-toggle="pill" href="#specification">Specification</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="pill" href="#reviews">Reviews (1)</a>
+                                     {% with product.reviews.count as total_reviews %}
+                                         <a class="nav-link" data-toggle="pill" href="#reviews">Reviews ({{ total_reviews }})</a>
+                                    {% endwith %}
+                                </li>
+                                <li class="nav-item">
+                                    {% with product.comments.count as total_comments %}
+                                        <a class="nav-link" data-toggle="pill" href="#comments">Comments ({{ total_comments }})</a>
+                                    {% endwith %}
                                 </li>
                             </ul>
 
@@ -137,43 +156,63 @@
                                     <p>{{ product.specifications|safe }}</p>
                                 </div>
                                 <div id="reviews" class="container tab-pane fade">
-                                    <div class="reviews-submitted">
-                                        <div class="reviewer">Phasellus Gravida - <span>01 Jan 2020</span></div>
-                                        <div class="ratting">
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
-                                            <i class="fa fa-star"></i>
+                                    {% include "store/reviews.html" %}
+                                </div>
+                                <div id="comments" class="container tab-pane fade">
+                                    <button id="add_comment" class="highlight-button btn btn-lg button xs-margin-bottom-five"><i class="fa fa-comment"></i> Add comment</button>
+                                    <hr>
+                                    <div id="commentModal" class="model-content">
+                                        <div class="comments">
+                                            <span id="comment_modal_close" class="close">&times;</span>
+                                            <h2 id="comment_modal_header" class="comment-box-header">Leave a comment</h2>
+
+                                            <form action="{% url 'add-comment' product.id %}" method="post" class="comments__form">
+                                                {% csrf_token %}
+                                                <div class="comments__form-info">
+                                                    <input type="hidden" name="parent" id="comment_parent" value="">
+
+                                                    <div class="comments__form-field">
+                                                        <input id="comments__form-label-name" minlength="3" maxlength="20" name="name" placeholder="Name" type="text" class="comments__form-input" required>
+                                                        <label class="comments__form-label" for="comments__form-label-name">
+                                                            <span class="comments__form-label-text">Name</span>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="comments__form-field">
+                                                        <input id="comments__form-label-mail" name="email" placeholder="E-mail" type="email" class="comments__form-input" required>
+                                                        <label class="comments__form-label" for="comments__form-label-mail">
+                                                            <span class="comments__form-label-text">E-mail</span>
+                                                        </label>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="comments__form-text">
+
+                                                    <div class="comments__form-field">
+                                                        <textarea id="comments__form-label-text" minlength="5" maxlength="1000" name="body" placeholder="Express your thoughts" type="text" class="comments__form-input comments__form-textarea" required></textarea>
+                                                        <label class="comments__form-label" for="comments__form-label-text">
+                                                            <span class="comments__form-label-text">Express your thoughts</span>
+                                                        </label>
+                                                    </div>
+                                                    <input name="submit" type="submit" id="commentSubmit" class="comments__form-submit" value="Post Comment">
+                                                </div>
+                                            </form>
                                         </div>
-                                        <p>
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
-                                        </p>
                                     </div>
-                                    <div class="reviews-submit">
-                                        <h4>Give your Review:</h4>
-                                        <div class="ratting">
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                            <i class="far fa-star"></i>
-                                        </div>
-                                        <div class="row form">
-                                            <div class="col-sm-6">
-                                                <input type="text" placeholder="Name">
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <input type="email" placeholder="Email">
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <textarea placeholder="Review"></textarea>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <button>Submit</button>
-                                            </div>
-                                        </div>
+
+                                    <div class="panel-body">
+                                        {% include "store/comments.html" %}
                                     </div>
+
+                                    <div>
+                                      <button class="btn waves-effect waves-light" id="lazy_more">
+                                          {% trans 'More comments' %}
+                                      </button>
+                                    </div>
+
+                                    <div><a id="lazyLoadLink" data-page="2">Load More Posts</a></div>
+
                                 </div>
                             </div>
                         </div>
@@ -187,13 +226,78 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{% static 'js/main/like_dislike.js' %}"></script>
+    <script src="{% static 'js/main/comment_review.js' %}"></script>
+
+    <script>
+        if(user !== 'AnonymousUser') {
+            var names = document.getElementsByName("name");
+            for (let i = 0; i < names.length; i++)
+                names[i].value = '{{ user.username }}';
+
+            var emails = document.getElementsByName("email");
+            for (let i = 0; i < emails.length; i++)
+                emails[i].value = '{{ user.email }}';
+                //emails[i].setAttribute("disabled", "disabled");
+        }
+    </script>
+
     <script>
         $(document).ready(function() {
-            var stock = {{ product.stock }};
-            var max = stock > 10 ? 10 : {{ product.stock }};
             $("input#id_quantity").attr({
-               "max" : max,
+               "max" : 5,
                "min" : 1
+            });
+        });
+    </script>
+
+    <script>
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+        $('#lazy_more').click(function (e) {
+            e.preventDefault();
+            if (empty_page === false && block_request === false) {
+                block_request = true;
+                page += 1;
+                //$('#preloader').show();
+                $.get('?page=' + page, function (data) {
+                    //$('#preloader').hide();
+                    if (data === '') {
+                        empty_page = true;
+                    } else {
+                        block_request = false;
+                        $('#comments .panel-body').append(data);
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        $('#lazyLoadLink').on('click', function() {
+            var link = $(this);
+            var page = link.data('page');
+
+            $.ajax({
+                type: 'post',
+                url: '/lazy_load_posts/{{ product.id }}/',
+                data: {
+                    'page': page,
+                },
+                success: function(data) {
+                    if (data.has_next) {
+                        link.data('page', page+1);
+                    } else {
+                        link.hide();
+                    }
+                    // append html to the posts div
+                    $('#comments .panel-body').append(data.comments_html);
+                    },
+                error: function(error) {
+                    console.log(error);
+                }
             });
         });
     </script>

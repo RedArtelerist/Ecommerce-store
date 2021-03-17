@@ -88,12 +88,15 @@ class ProductFilter(django_filters.FilterSet):
 
         if value == 'popular' or value == 'action':
             tuples = [(r.id, r.sales) for r in queryset]
+        elif value == 'rank':
+            tuples = [(r.id, r.rate) for r in queryset]
         else:
             tuples = [(r.id, r.discount_price) for r in queryset]
+
         sort_list = sorted(tuples, key=lambda x: x[1])
         pk_list = [idx for idx, rating in sort_list]
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)])
-        if value == 'price-desc' or value == 'popular' or value == 'action':
+        if value == 'price-desc' or value == 'popular' or value == 'action' or value == 'rank':
             preserved = -preserved
 
         queryset = queryset.filter(pk__in=pk_list).order_by(preserved)

@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404, render
+from django.views.decorators.http import require_POST
 from cart.views import update_cart_in_all_user_sessions
 from store.models import Product, Category
 from wishlist.wishlist import WishList

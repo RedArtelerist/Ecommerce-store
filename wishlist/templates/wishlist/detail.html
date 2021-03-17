@@ -40,6 +40,23 @@
                                 </div>
                                 <div class="why-text">
                                     <h4><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h4>
+
+                                    <div style="display: flex">
+                                        <div class="product-rating">
+                                            <i class="text-warning {% if product.rate < 1 %}far{% else %}fas{% endif %} fa-star"></i>
+                                            <i class="text-warning {% if product.rate < 2 %}far{% else %}fas{% endif %} fa-star"></i>
+                                            <i class="text-warning {% if product.rate < 3 %}far{% else %}fas{% endif %} fa-star"></i>
+                                            <i class="text-warning {% if product.rate < 4 %}far{% else %}fas{% endif %} fa-star"></i>
+                                            <i class="text-warning {% if product.rate < 5 %}far{% else %}fas{% endif %} fa-star"></i>
+                                            <strong>{{ product.rate |stringformat:".2f"}}</strong>
+                                        </div>
+                                        <div class="reviews_count">
+                                            {% with product.reviews.count as reviews_count %}
+                                                {{ reviews_count }} Review{{ reviews_count|pluralize }}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+
                                     {% if product.discount %}
                                         <div class="price">
                                             <h5 class="old-price">₴{{ product.price }}</h5>

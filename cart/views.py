@@ -5,11 +5,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from coupons.forms import CouponApplyForm
 from wishlist.wishlist import WishList
 from .cart import Cart
 from .forms import CartAddProductForm
 from store.models import Product
-from .models import UserSession
+from .models import UserSession, UserCart
 
 
 def update_cart_in_all_user_sessions(request):
@@ -19,11 +20,22 @@ def update_cart_in_all_user_sessions(request):
     user_cart = Cart(request)
     user_wishlist = WishList(request)
 
+    userCart = UserCart.objects.get(user=request.user)
+    userCart.items_cart = user_cart.cart.items()
+    userCart.items_wishlist = user_wishlist.wishlist.items()
+    if request.session['coupon_id'] is not None:
+        userCart.coupon = request.session['coupon_id']
+    else:
+        userCart.coupon = 0
+
+    userCart.save()
+
     if user_sessions:
         for user_session in user_sessions:
             session = user_session.session
             session_data = session.get_decoded()
             session_data['cart'] = user_cart.cart
+            session_data['coupon_id'] = request.session['coupon_id']
             session_data['wishlist'] = user_wishlist.wishlist
             encoded_data = SessionStore().encode(session_data)
             session.session_data = encoded_data
@@ -64,6 +76,7 @@ def cart_update(request):
                      quantity=1)
         if action == 'del':
             cart.remove_single(product)
+
         if request.user.is_authenticated:
             update_cart_in_all_user_sessions(request)
 
@@ -74,6 +87,7 @@ def cart_remove(request, product_id):
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.remove(product)
+
     if request.user.is_authenticated:
         update_cart_in_all_user_sessions(request)
 
@@ -82,4 +96,6 @@ def cart_remove(request, product_id):
 
 def cart_detail(request):
     cart = Cart(request)
-    return render(request, 'cart/detail.html', {'cart': cart})
+    coupon_apply_form = CouponApplyForm()
+    return render(request, 'cart/detail.html',
+                  {'cart': cart, 'coupon_apply_form': coupon_apply_form})

@@ -41,7 +41,7 @@
                                             <td>
                                                 <div class="qty">
                                                     <button data-product="{{product.id}}" data-action="del" class="btn-minus update-cart"><i class="fa fa-minus"></i></button>
-                                                    <input type="number" value="{{ item.quantity }}" data-stock="{{ product.stock }}" min="1" disabled>
+                                                    <input type="number" value="{{ item.quantity }}" min="1" disabled>
                                                     <button data-product="{{product.id}}" data-action="add" class="btn-plus update-cart"><i class="fa fa-plus"></i></button>
                                                 </div>
                                             </td>
@@ -69,12 +69,15 @@
             <div class="row my-5">
                 <div class="col-lg-6 col-sm-6">
                     <div class="coupon-box">
-                        <div class="input-group input-group-sm">
-                            <input class="form-control" placeholder="Enter your coupon code" aria-label="Coupon code" type="text">
-                            <div class="input-group-append">
-                                <button class="btn btn-theme" type="button">Apply Coupon</button>
+                        <form action="{% url "coupons:apply" %}" method="post">
+                            {% csrf_token %}
+                            <div class="input-group input-group-sm">
+                                {{ coupon_apply_form }}
+                                <div class="input-group-append">
+                                    <button class="btn btn-theme" type="submit">Apply Coupon</button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-6">
@@ -91,33 +94,34 @@
                         <h3>Order summary</h3>
                         <div class="d-flex">
                             <h4>Sub Total</h4>
-                            <div class="ml-auto font-weight-bold"> $ 130 </div>
+                            <div class="ml-auto font-weight-bold"> ₴ {{ cart.get_total_price }} </div>
                         </div>
                         <div class="d-flex">
                             <h4>Discount</h4>
                             <div class="ml-auto font-weight-bold"> $ 40 </div>
                         </div>
-                        <hr class="my-1">
-                        <div class="d-flex">
-                            <h4>Coupon Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $ 10 </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Tax</h4>
-                            <div class="ml-auto font-weight-bold"> $ 2 </div>
-                        </div>
-                        <div class="d-flex">
-                            <h4>Shipping Cost</h4>
-                            <div class="ml-auto font-weight-bold"> Free </div>
-                        </div>
+                        {% if cart.coupon %}
+                            <hr class="my-1">
+                            <div class="d-flex">
+                                <h4>Coupon:</h4>
+                                <div class="ml-auto font-weight-bold coupon">
+                                    <span>- ₴ {{ cart.get_discount }}</span>
+                                </div>
+                            </div>
+                            <h5>{{ cart.coupon.code }} ({{ cart.coupon.discount }}%)</h5>
+                        {% endif %}
+
                         <hr>
                         <div class="d-flex gr-total">
                             <h5>Grand Total</h5>
-                            <div class="ml-auto h5">₴ {{ cart.get_total_price }}</div>
+                            <div class="ml-auto h5">₴ {{ cart.get_total_price_after_discount }}</div>
                         </div>
-                        <hr> </div>
+                        <hr>
+                    </div>
                 </div>
-                <div class="col-12 d-flex shopping-box"><a href="checkout.html" class="ml-auto btn hvr-hover">Checkout</a> </div>
+                <div class="col-12 d-flex shopping-box">
+                    <a href="{% url 'orders:checkout' %}" class="ml-auto btn hvr-hover">Checkout</a>
+                </div>
             </div>
         {% endif %}
         </div>
@@ -125,27 +129,4 @@
 {% endblock %}
 
 {% block script %}
-    <script>
-        $('.qty button').on('click', function () {
-            var $button = $(this);
-            var stock = $button.parent().find('input').data("stock");
-            var oldValue = $button.parent().find('input').val();
-
-            if ($button.hasClass('btn-plus')) {
-                stock = stock > 10 ? 10 : stock;
-                if(oldValue < stock)
-                    var newVal = parseFloat(oldValue) + 1;
-                else {
-                    newVal = stock;
-                }
-            } else {
-                if (oldValue > 1) {
-                    var newVal = parseFloat(oldValue) - 1;
-                } else {
-                    newVal = 1;
-                }
-            }
-            $button.parent().find('input').val(newVal);
-        });
-    </script>
 {% endblock %}

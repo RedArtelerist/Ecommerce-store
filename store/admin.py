@@ -1,22 +1,12 @@
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.contrib import admin
 from django import forms
-from django.contrib.admin import SimpleListFilter
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from mptt.admin import DraggableMPTTAdmin
-
-from EcommerceStore import settings
-from cart.cart import Cart
 from store.models import *
-
-
-"""@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}"""
 
 
 @admin.register(Category)
@@ -88,11 +78,11 @@ class ImagesInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'category', 'company', 'price', 'stock', 'sales', 'available', 'created', 'updated', 'get_image']
+    list_display = ['name', 'category', 'company', 'price', 'sales', 'available', 'created', 'updated', 'get_image']
     list_filter = ['category', 'company', 'year', 'available', 'created', 'updated']
     readonly_fields = ('get_image', 'sales')
     search_fields = ('name', 'category__name', 'company__name')
-    list_editable = ['price', 'stock', 'available']
+    list_editable = ['price', 'available']
     prepopulated_fields = {'slug': ('name',)}
     save_on_top = True
 
@@ -113,7 +103,7 @@ class ProductAdmin(admin.ModelAdmin):
             "fields": (('price', 'discount', 'year'),)
         }),
         (None, {
-            "fields": ('stock', 'available')
+            "fields": ('sales', 'available')
         }),
     )
 
@@ -135,16 +125,12 @@ class ProductAdmin(admin.ModelAdmin):
             cart = session_data.get('cart')
 
             if cart and product_id in cart:
-                if cart[product_id]['quantity'] > obj.stock:
-                    cart[product_id]['quantity'] = obj.stock
-
                 if not obj.available:
                     cart.pop(product_id, None)
-
-                session_data['cart'] = cart
-                encoded_data = SessionStore().encode(session_data)
-                session.session_data = encoded_data
-                session.save()
+                    session_data['cart'] = cart
+                    encoded_data = SessionStore().encode(session_data)
+                    session.session_data = encoded_data
+                    session.save()
 
         super(ProductAdmin, self).save_model(request, obj, form, change)
 
@@ -158,3 +144,51 @@ class ImageItemAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.image.url} width="100" style="max-height: 250px""')
 
     get_image.short_description = 'Image'
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'product', 'user', 'status', 'created', 'updated']
+    readonly_fields = ('name', 'email', 'user', 'body', 'product', 'created', 'updated')
+    list_editable = ['status']
+    save_on_top = True
+
+    fieldsets = (
+        (None, {
+            "fields": (('created', 'updated'), 'status')
+        }),
+        (None, {
+            "fields": (('user', 'product',),)
+        }),
+        (None, {
+            "fields": (('name', 'email',),)
+        }),
+        (None, {
+            "fields": ('parent', 'body')
+        }),
+
+    )
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['name', 'product', 'rate', 'user', 'status', 'created', 'updated']
+    readonly_fields = ('name', 'rate', 'user', 'product', 'created', 'updated')
+    list_editable = ['status']
+    save_on_top = True
+
+    fieldsets = (
+        (None, {
+            "fields": (('created', 'updated'), 'status')
+        }),
+        (None, {
+            "fields": (('user', 'product', 'rate',),)
+        }),
+        (None, {
+            "fields": (('name',), 'advantages', 'disadvantages')
+        }),
+        (None, {
+            "fields": ('body',)
+        }),
+
+    )

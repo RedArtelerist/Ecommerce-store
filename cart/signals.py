@@ -16,28 +16,31 @@ def user_logged_in_handler(sender, request, user, **kwargs):
 def get_user_cart(sender, user, request, **kwargs):
     try:
         user_cart = UserCart.objects.get(user=user)
+
+        cart = Cart(request)
+        wishlist = WishList(request)
+        if not cart.is_empty:
+            print(cart)
+
+        cart_items = dict(user_cart.items_cart)
+        wishlist_items = dict(user_cart.items_wishlist)
+
+        for key, value in cart_items.items():
+            product = Product.objects.get(pk=key)
+            if product and product.available:
+                cart.add(product, quantity=value['quantity'], price=value['price'])
+
+        for key in wishlist_items.keys():
+            product = Product.objects.get(pk=key)
+            wishlist.add(product)
+
+        if user_cart.coupon != 0:
+            request.session['coupon_id'] = user_cart.coupon
+
     except UserCart.DoesNotExist:
-        user_cart = None
+        user_cart = UserCart.objects.create(user=user)
     if not user_cart:
         print("Cart is absent")
-
-    cart = Cart(request)
-    wishlist = WishList(request
-                        )
-    if not cart.is_empty:
-        print(cart)
-
-    cart_items = dict(user_cart.items_cart)
-    wishlist_items = dict(user_cart.items_wishlist)
-
-    for key, value in cart_items.items():
-        product = Product.objects.get(pk=key)
-        if product and product.available and product.stock >= value['quantity']:
-            cart.add(product, quantity=value['quantity'], price=value['price'])
-
-    for key in wishlist_items.keys():
-        product = Product.objects.get(pk=key)
-        wishlist.add(product)
 
 
 @receiver(user_logged_out)
@@ -46,5 +49,9 @@ def create_or_update_user_cart(sender, request, user, **kwargs):
     cart = Cart(request)
     wishlist = WishList(request)
     user_cart.items_cart = cart.cart.items()
+    if request.session['coupon_id'] is not None:
+        user_cart.coupon = request.session['coupon_id']
+    else:
+        user_cart.coupon = 0
     user_cart.items_wishlist = wishlist.wishlist.items()
     user_cart.save()

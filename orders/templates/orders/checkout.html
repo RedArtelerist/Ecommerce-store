@@ -1,0 +1,245 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block content %}
+    <!-- Start All Title Box -->
+<div class="all-title-box">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Checkout</h2>
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'cart:cart_detail' %}">Cart</a></li>
+                    <li class="breadcrumb-item active">Checkout</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End All Title Box -->
+<!-- Start Cart  -->
+<div class="cart-box-main">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-6 mb-3">
+                <div class="checkout-address">
+                    <form action="." id="orderForm" class="needs-validation" method="post">
+                        {% csrf_token %}
+                        <div class="customer">
+                             <div class="title-left">
+                                <h3>Customer information</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3 order-form-control">
+                                    <label for="id_customer_first_name">First name <span style="color: red">*</span></label>
+                                    {{ form.customer_first_name }}
+                                    <small>Error Message</small>
+                                </div>
+                                <div class="col-md-6 mb-3 order-form-control">
+                                    <label for="id_customer_last_name">Last name <span style="color: red">*</span></label>
+                                    {{ form.customer_last_name }}
+                                    <small>Error Message</small>
+                                </div>
+                            </div>
+                            <div class="mb-3 order-form-control">
+                                <label for="id_customer_email">Email Address <span style="color: red">*</span></label>
+                                    {{ form.customer_email }}
+                                <small>Error Message</small>
+                            </div>
+                            <div class="mb-3 order-form-control">
+                                <label for="id_customer_phone">Mobile Phone <span style="color: red">*</span></label>
+                                    {{ form.customer_phone }}
+                                <small>Error Message</small>
+                            </div>
+                        </div>
+
+                        <div class="delivery">
+                            <div class="title-left">
+                                <h3>Delivery</h3>
+                            </div>
+                            <div class="mb-3 order-form-control">
+                                <label for="id_city">City <span style="color: red">*</span></label>
+                                    {{ form.city }}
+                                <small>Error Message</small>
+                            </div>
+
+                            <div class="mb-3 order-form-control">
+                                <label for="id_address">Address <span style="color: red">*</span></label>
+                                    {{ form.address }}
+                                <small>Error Message</small>
+                            </div>
+
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" checked class="custom-control-input" id="shipto">
+                                <label class="custom-control-label" for="shipto">I am the recipient</label>
+                            </div>
+                        </div>
+                        <br>
+
+                        <div class="recipient">
+                            <div class="row">
+                                <div class="col-md-6 mb-3 order-form-control">
+                                    <label for="id_recipient_first_name">First name <span style="color: red">*</span></label>
+                                    {{ form.recipient_first_name }}
+                                    <small>Error Message</small>
+                                </div>
+                                <div class="col-md-6 mb-3 order-form-control">
+                                    <label for="id_recipient_last_name">Last name <span style="color: red">*</span></label>
+                                    {{ form.recipient_last_name }}
+                                    <small>Error Message</small>
+                                </div>
+                            </div>
+                            <div class="mb-3 order-form-control">
+                                <label for="id_recipient_email">Email Address <span style="color: red">*</span></label>
+                                    {{ form.recipient_email }}
+                                <small>Error Message</small>
+                            </div>
+                        </div>
+
+                        <div class="shipping-method-box">
+                            <div class="title-left">
+                                <h3>Shipping Method</h3>
+                            </div>
+                            <div class="mb-4">
+                                {% for radio in form.delivery %}
+                                    <div class="custom-control custom-radio">
+                                        {{ radio.tag }}
+                                        <label class="custom-control-label" for="id_delivery_{{ forloop.counter0 }}">
+                                            {{ radio.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="payment">
+                            <div class="title-left">
+                                <h3>Payment</h3>
+                            </div>
+                            <div class="d-block my-3">
+                                {% for radio in form.paymentMethod %}
+                                    <div class="custom-control custom-radio">
+                                        {{ radio.tag }}
+                                        <label class="custom-control-label" for="id_paymentMethod_{{ forloop.counter0 }}">
+                                            {{ radio.choice_label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <hr class="mb-1">
+                    </form>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 mb-3">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <div class="odr-box">
+                            <div class="title-left">
+                                <h3>Shopping cart</h3>
+                            </div>
+                            <div class='order-info'>
+                                <div class='order-info-content'>
+                                    {% for item in cart %}
+                                        {% with product=item.product %}
+                                            <table class='order-table'>
+                                                <tbody>
+                                                <tr>
+                                                    <td><img src="{{ product.imageURL }}" class='full-width' alt="{{ product.name }}"/>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ product.get_absolute_url }}"><span class='thin'>{{ product.name }}</span></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class='qnt'>x{{ item.quantity }}</div>
+                                                        <div class='order-item-price'>₴{{ item.total_price }}</div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+
+                                            </table>
+                                        {% endwith %}
+                                        <div class='line'></div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div class="order-box">
+                            <div class="title-left">
+                                <h3>Your order</h3>
+                            </div>
+                            <div class="d-flex">
+                                <div class="font-weight-bold">Product</div>
+                                <div class="ml-auto font-weight-bold">Total</div>
+                            </div>
+                            <hr class="my-1">
+                            <div class="d-flex">
+                                <h4>Sub Total</h4>
+                                <div class="ml-auto font-weight-bold"> ₴{{ cart.get_total_price }} </div>
+                            </div>
+                            <div class="d-flex">
+                                <h4>Discount</h4>
+                                <div class="ml-auto font-weight-bold"> ₴ 40 </div>
+                            </div>
+                            <hr class="my-1">
+                            {% if cart.coupon %}
+                                <div class="d-flex">
+                                <h4>Coupon: {{ cart.coupon.code }} ({{ cart.coupon.discount }}%)</h4>
+                                <div class="ml-auto font-weight-bold coupon">
+                                    <span> - ₴{{ cart.get_discount }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="d-flex">
+                                <h4>Shipping Cost</h4>
+                                <div class="ml-auto font-weight-bold"> Free </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex gr-total">
+                                <h5>Grand Total</h5>
+                                <div class="ml-auto h5"> ₴{{ cart.get_total_price_after_discount }} </div>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+
+                    <div class="price-box-bar col-12 d-flex shopping-box">
+                        <button id="order-submit-btn" form="orderForm" type="submit" class="ml-auto btn hvr-hover">Place Order</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/main/order.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+    <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8dhGOLmLiQ4YQOf1wzQktd0oNI7iga80&libraries=places&callback=initMap"></script>-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        if(user !== 'AnonymousUser') {
+           customer_first_name.value = '{{ user.first_name }}';
+           customer_last_name.value = '{{ user.last_name }}';
+           customer_email.value = '{{ user.email }}';
+           recipient_first_name.value = customer_first_name.value;
+           recipient_last_name.value = customer_last_name.value;
+           recipient_email.value = customer_email.value;
+        }
+        console.log('{{ request.session.cart }}')
+    </script>
+{% endblock %}

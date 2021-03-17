@@ -1,0 +1,93 @@
+{% load my_templatetags %}
+{% load static %}
+
+{% for comment in comments %}
+    <div class="media-block">
+        <a class="media-left" href="#"><img class="img-circle img-small" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
+        <div class="media-body">
+            {% if user == comment.user %}
+                <form method="post" action="{% url 'delete-comment' comment.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-com-delete btn-hover-success pull-right" type="submit"><i class="far fa-trash-alt"></i></button>
+                </form>
+            {% endif %}
+            <div class="mar-btm">
+                <a href="#" class="btn-link text-semibold media-heading box-inline">{{ comment.name }}</a>
+                <p class="text-muted text-sm">{{ comment.updated }}</p>
+            </div>
+            <p>{{ comment.body }}</p>
+            <div class="pad-ver">
+                <ul class="list-unstyled list-inline media-detail-com pull-right">
+                    <li data-id="{{ comment.id }}" data-type="comment" data-action="like" title="Like">
+                        <span data-icon="like" class="like
+                            {% if comment.votes.likes.all|user_in:user %}liked{% else %}default{% endif %}">
+                            <i class="fa fa-thumbs-up"></i>
+                        </span>
+                        <span data-count="like">{{ comment.votes.likes.count }}</span>
+                    </li>
+                    <li data-id="{{ comment.id }}" data-type="comment" data-action="dislike" title="Dislike">
+                        <span data-icon="dislike" class="dislike
+                            {% if comment.votes.dislikes.all|user_in:user %}disliked{% else %}default{% endif %}">
+                            <i class="fa fa-thumbs-down"></i>
+                        </span>
+                        <span data-count="dislike">{{ comment.votes.dislikes.count }}</span>
+                    </li>
+                </ul>
+
+                <button class="btn btn-sm btn-default1 btn-hover-primary" onclick="addReply('{{ comment.id }}')">Reply</button>
+                {% with comment.replies.count as replies_count %}
+                    {% if replies_count %}
+                        <a class="btn btn-default1 btn-circle" data-toggle="collapse" href="#reply_{{ comment.id }}">
+                            <i class="fas fa-comment"></i>
+                            {{ replies_count }} comment{{ replies_count|pluralize }}
+                        </a>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <hr style="margin-top: 10px">
+
+            <!-- Replies -->
+            <div class="collapse" id="reply_{{ comment.id }}">
+            {% for reply in comment.replies %}
+                <div class="media-block">
+                    <a class="media-left" href="#"><img class="img-circle img-small" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar2.png"></a>
+                    <div class="media-body">
+                        {% if user == reply.user %}
+                            <form method="post" action="{% url 'delete-comment' reply.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-com-delete btn-hover-success pull-right" type="submit"><i class="far fa-trash-alt"></i></button>
+                            </form>
+                        {% endif %}
+                        <div class="mar-btm">
+                            <a href="#" class="btn-link text-semibold media-heading box-inline">{{ reply.name }}</a>
+                            <p class="text-muted text-sm">{{ reply.updated }}</p>
+                        </div>
+                        <p>{{ reply.body }}</p>
+                        <div class="pad-ver">
+                            <ul class="list-unstyled list-inline media-detail-rep pull-right">
+                                <li data-id="{{ reply.id }}" data-type="comment" data-action="like" title="Like">
+                                    <span data-icon="like" class="like
+                                        {% if reply.votes.likes.all|user_in:user %}liked{% else %}default{% endif %}">
+                                        <i class="fa fa-thumbs-up"></i>
+                                    </span>
+                                    <span data-count="like">{{ reply.votes.likes.count }}</span>
+                                </li>
+                                <li data-id="{{ reply.id }}" data-type="comment" data-action="dislike" title="Dislike">
+                                    <span data-icon="dislike" class="dislike
+                                        {% if reply.votes.dislikes.all|user_in:user %}disliked{% else %}default{% endif %}">
+                                        <i class="fa fa-thumbs-down"></i>
+                                    </span>
+                                    <span data-count="dislike">{{ reply.votes.dislikes.count }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <hr style="margin-top: 8px">
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+

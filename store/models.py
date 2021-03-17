@@ -1,7 +1,8 @@
 import decimal
-
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Sum, Avg
 from django.urls import reverse
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -97,7 +98,7 @@ class Product(models.Model):
     discount = models.PositiveSmallIntegerField('Discount', default=0, null=True, validators=[validate_discount])
     year = models.PositiveSmallIntegerField('Year', default=datetime.datetime.now().year, validators=[validate_product_year])
 
-    stock = models.PositiveIntegerField('Stock')
+    #stock = models.PositiveIntegerField('Stock')
     sales = models.PositiveIntegerField('Sales', default=0)
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -127,6 +128,20 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.id, self.slug])
 
+    def comments(self):
+        return self.comment_set.filter(status=True, parent__isnull=True).order_by('-updated')
+
+    def reviews(self):
+        return self.review_set.filter(status=True).order_by('-updated')
+
+    @property
+    def rate(self):
+        reviews = Review.objects.filter(product=self, status='True').aggregate(average=Avg('rate'))
+        avg = 0
+        if reviews["average"] is not None:
+            avg = float(reviews["average"])
+        return avg
+
 
 class ImageItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -149,15 +164,51 @@ class ImageItem(models.Model):
         verbose_name_plural = 'Product Gallery'
 
 
-class Comment(models.Model):
-    STATUS = (
-        ('New', 'New'),
-        ('True', 'True'),
-        ('False', 'False'),
+"""-----------------------------------------Comments and Reviews---------------------------------------------------------------"""
+
+
+class LikeDislikeManager(models.Manager):
+    use_for_related_fields = True
+
+    def likes(self):
+        return self.get_queryset().filter(vote__gt=0)
+
+    def dislikes(self):
+        return self.get_queryset().filter(vote__lt=0)
+
+    def sum_rating(self):
+        return self.get_queryset().aggregate(Sum('vote')).get('vote__sum') or 0
+
+
+class LikeDislike(models.Model):
+    LIKE = 1
+    DISLIKE = -1
+
+    VOTES = (
+        (DISLIKE, 'Dislike'),
+        (LIKE, 'Like')
     )
 
+    vote = models.SmallIntegerField(verbose_name="Vote", choices=VOTES)
+    user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+
+    objects = LikeDislikeManager()
+
+
+STATUS = (
+    ('New', 'New'),
+    ('True', 'True'),
+    ('False', 'False'),
+)
+
+
+class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=80)
     email = models.EmailField()
     body = models.TextField()
@@ -165,9 +216,36 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS, default='New')
+    votes = GenericRelation(LikeDislike, related_query_name='comments')
 
     class Meta:
-        ordering = ('created',)
+        ordering = ('-updated',)
 
     def __str__(self):
         return 'Comment by {} on {}'.format(self.name, self.product)
+
+    def count_replies(self):
+        return self.comment_set.filter(statis=True).count()
+
+    def replies(self):
+        return self.comment_set.filter(status=True).order_by('updated')
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=80)
+    body = models.TextField()
+    advantages = models.CharField(max_length=200)
+    disadvantages = models.CharField(max_length=200)
+    rate = models.IntegerField(default=1)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=STATUS, default='New')
+    votes = GenericRelation(LikeDislike, related_query_name='comments')
+
+    class Meta:
+        ordering = ('-updated',)
+
+    def __str__(self):
+        return 'Review by {} on {}'.format(self.name, self.product)

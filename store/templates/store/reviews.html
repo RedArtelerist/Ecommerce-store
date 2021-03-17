@@ -1,0 +1,116 @@
+{% load my_templatetags %}
+{% load static %}
+
+<button id="add_review" class="highlight-button btn btn-lg button xs-margin-bottom-five"><i class="fas fa-plus"></i> Add review</button>
+<hr>
+
+<div id="reviewModal" class="model-content">
+    <div class="reviews">
+        <span id="review_modal_close" class="close">&times;</span>
+        <h2 id="review_modal_header" class="comment-box-header">Add a review</h2>
+
+        <form action="{% url 'add-review' product.id %}" method="post" class="review__form">
+            {% csrf_token %}
+            <div>
+                <div class="form-group">
+                    <div class="input-rating">
+                        <div id="rating" class="stars">
+                            <input type="radio" id="star5" name="rate" value="5" /><label for="star5"></label>
+                            <input type="radio" id="star4" name="rate" value="4" /><label for="star4"></label>
+                            <input type="radio" id="star3" name="rate" value="3" /><label for="star3"></label>
+                            <input type="radio" id="star2" name="rate" value="2" /><label for="star2"></label>
+                            <input type="radio" id="star1" name="rate" value="1" /><label for="star1"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comments__form-field">
+                    <input id="reviews__form-label-name" minlength="3" maxlength="20" name="name" placeholder="Name" type="text" class="comments__form-input" required>
+                    <label class="comments__form-label" for="reviews__form-label-name">
+                        <span class="comments__form-label-text">Name</span>
+                    </label>
+                </div>
+
+                <div class="comments__form-field">
+                    <input id="reviews__form-label-advantages" minlength="5" maxlength="200" name="advantages" placeholder="Enter some advantages" type="text" class="comments__form-input" required>
+                    <label class="comments__form-label" for="reviews__form-label-advantages">
+                        <span class="comments__form-label-text">Enter some advantages</span>
+                    </label>
+                </div>
+
+                <div class="comments__form-field">
+                    <input id="reviews__form-label-disadvantages" minlength="5" maxlength="200" name="disadvantages" placeholder="Enter some disadvantages" type="text" class="comments__form-input" required>
+                    <label class="comments__form-label" for="reviews__form-label-disadvantages">
+                        <span class="comments__form-label-text">Enter some disadvantages</span>
+                    </label>
+                </div>
+
+                <div class="comments__form-field">
+                    <textarea id="reviews__form-label-text" minlength="5" maxlength="1000" name="body" placeholder="Express your thoughts" type="text" class="comments__form-input comments__form-textarea" required></textarea>
+                    <label class="comments__form-label" for="reviews__form-label-text">
+                        <span class="comments__form-label-text">Express your thoughts</span>
+                    </label>
+                </div>
+                <input name="submit" type="submit" id="ReviewSubmit" class="comments__form-submit" value="Post Review">
+            </div>
+        </form>
+    </div>
+</div>
+{% for review in product.reviews %}
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                {% if user == review.user %}
+                    <form class="float-right" method="post" action="{% url 'delete-review' review.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-rev-delete btn-hover-success" type="submit"><i class="far fa-trash-alt"></i></button>
+                    </form>
+                {% endif %}
+                <div class="col-md-2">
+                    <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid" alt=""/>
+                    <p class="text-thirdly text-center">{{ review.updated }}</p>
+                </div>
+                <div class="col-md-10">
+                    <p class="float-left review-username" href="https://maniruzzaman-akash.blogspot.com/p/contact.html"><strong>{{ review.user.username}}</strong></p>
+                    <span class="float-right">
+                        <i class="text-warning {% if review.rate < 5 %}far{% else %}fas{% endif %} fa-star"></i>
+                    </span>
+                    <span class="float-right">
+                        <i class="text-warning {% if review.rate < 4 %}far{% else %}fas{% endif %} fa-star"></i>
+                    </span>
+                    <span class="float-right">
+                        <i class="text-warning {% if review.rate < 3 %}far{% else %}fas{% endif %} fa-star"></i>
+                    </span>
+                    <span class="float-right">
+                        <i class="text-warning {% if review.rate < 2 %}far{% else %}fas{% endif %} fa-star"></i>
+                    </span>
+                    <span class="float-right">
+                        <i class="text-warning {% if review.rate < 1 %}far{% else %}fas{% endif %} fa-star"></i>
+                    </span>
+                    <div class="clearfix"></div>
+                    <p>{{ review.body}}</p>
+                    <h3 class="head-advantages"><strong>Advantages:</strong></h3>
+                    <p class="advantages">{{ review.advantages }}</p>
+                    <h3 class="head-disadvantages"><strong>Disadvantages:</strong></h3>
+                    <p class="disadvantages">{{ review.disadvantages }}</p>
+                    <ul class="list-unstyled list-inline media-detail-rep pull-right">
+                        <li data-id="{{ review.id }}" data-type="review" data-action="like" title="Like">
+                            <span data-icon="like" class="like
+                                {% if review.votes.likes.all|user_in:user %}liked{% else %}default{% endif %}">
+                                <i class="fa fa-thumbs-up"></i>
+                            </span>
+                            <span data-count="like">{{ review.votes.likes.count }}</span>
+                        </li>
+                        <li data-id="{{ review.id }}" data-type="review" data-action="dislike" title="Dislike">
+                            <span data-icon="dislike" class="dislike
+                                {% if review.votes.dislikes.all|user_in:user %}disliked{% else %}default{% endif %}">
+                                <i class="fa fa-thumbs-down"></i>
+                            </span>
+                            <span data-count="dislike">{{ review.votes.dislikes.count }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
