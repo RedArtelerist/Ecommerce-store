@@ -23,6 +23,7 @@ def update_cart_in_all_user_sessions(request):
     userCart = UserCart.objects.get(user=request.user)
     userCart.items_cart = user_cart.cart.items()
     userCart.items_wishlist = user_wishlist.wishlist.items()
+
     if request.session['coupon_id'] is not None:
         userCart.coupon = request.session['coupon_id']
     else:

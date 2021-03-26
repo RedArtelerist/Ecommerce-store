@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    {% block style %}{% endblock %}
+
     <title>{% block title %}{% endblock %}</title>
 
     <link rel="shortcut icon" href="{% static 'images/icons/favicon.ico' %}" type="image/x-icon">
@@ -145,7 +147,12 @@
                     </div>
                     <div class="our-link">
                         <ul>
-                            <li><a href="#">My Account</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="#">My Account</a></li>
+                            {% else %}
+                                <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                                <li><a href="{% url 'accounts:register' %}">Sign Up</a></li>
+                            {% endif %}
                             <li><a href="#">Our location</a></li>
                             <li><a href="#">Contact Us</a></li>
                         </ul>
@@ -223,6 +230,9 @@
                                 {% endwith %}
                             </a>
                         </li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt"></i></a></li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- End Atribute Navigation -->

@@ -3274,7 +3274,7 @@ h2.comment-box-header::after {
 }
 
 /* The Close Button */
-.close {
+.close-btn {
     color: grey;
     float: right;
     font-size: 40px;
@@ -3283,8 +3283,8 @@ h2.comment-box-header::after {
     margin-right: -40px;
 }
 
-.close:hover,
-.close:focus {
+.close-btn :hover,
+.close-btn :focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;

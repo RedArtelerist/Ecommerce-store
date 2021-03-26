@@ -36,9 +36,12 @@ def get_user_cart(sender, user, request, **kwargs):
 
         if user_cart.coupon != 0:
             request.session['coupon_id'] = user_cart.coupon
+        else:
+            request.session['coupon_id'] = None
 
     except UserCart.DoesNotExist:
-        user_cart = UserCart.objects.create(user=user)
+        user_cart = UserCart.objects.create(user=user, coupon=0)
+        request.session['coupon_id'] = None
     if not user_cart:
         print("Cart is absent")
 
@@ -49,9 +52,13 @@ def create_or_update_user_cart(sender, request, user, **kwargs):
     cart = Cart(request)
     wishlist = WishList(request)
     user_cart.items_cart = cart.cart.items()
-    if request.session['coupon_id'] is not None:
-        user_cart.coupon = request.session['coupon_id']
-    else:
+    try:
+        if request.session['coupon_id'] is not None:
+            user_cart.coupon = request.session['coupon_id']
+        else:
+            user_cart.coupon = 0
+    except Exception:
         user_cart.coupon = 0
+
     user_cart.items_wishlist = wishlist.wishlist.items()
     user_cart.save()

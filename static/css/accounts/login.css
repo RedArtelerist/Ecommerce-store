@@ -1,0 +1,61 @@
+
+/*---------------------------------------*/
+
+
+.help-text p {
+    text-align: center;
+    font-size: 14px;
+}
+
+.help-text p a {
+    color: #666;
+    text-decoration: none;
+}
+
+.help-text p a:hover {
+    color: rgb(56, 102, 189);
+}
+
+.forgot-pass a{
+    color: rgb(56, 102, 189);
+}
+
+
+#login-card{
+    width:350px;
+    border-radius: 25px;
+    margin: 5% auto;
+}
+
+#id_username, #id_password{
+    border-radius:30px;
+    background-color: #ebf0fc;
+    border-color: #ebf0fc;
+    color: #9da3b0;
+}
+
+#button{
+    border-radius:30px;
+}
+
+#btn{
+    position: absolute;
+    bottom: -35px;
+    padding: 5px;
+    margin: 0 55px;
+    align-items: center;
+    border-radius: 5px;
+}
+#container{
+    margin-top:25px;
+}
+
+.btn-circle.btn-sm {
+    width: 40px;
+    height: 40px;
+    padding: 2px 0;
+    border-radius: 25px;
+    font-size: 14px;
+    text-align: center;
+    margin: 8px;
+}

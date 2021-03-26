@@ -1,0 +1,49 @@
+{% extends "store/base.html" %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
+{% endblock %}
+
+{% block content %}
+     <div class="all-title-box">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item active">Login</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-card" class="card">
+        <div class="card-body">
+            <h2 class="text-center">Login form</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% include 'accounts/messages.html' %}
+
+                <div class="form-group">
+                    {{ login_form.username }}
+                </div>
+                <div class="form-group">
+                    {{ login_form.password }}
+                </div>
+                <button type="submit" id="button" class="btn btn-primary deep-purple btn-block ">Submit</button>
+                <br>
+            </form>
+            <p class="text-center forgot-pass"><a href='{% url 'accounts:password_reset' %}'>Forgot password?</a></p>
+            <p class="text-center">Don't have an account?<a href='{% url 'accounts:register' %}'>Create an account</a>.</p>
+
+            <div id="btn" class="text-center">
+                <button type="button" class="btn btn-primary btn-circle btn-sm"><i class="fab fa-facebook-f"></i></button>
+                <button type="button" class="btn btn-danger btn-circle btn-sm"><i class="fab fa-google"></i></button>
+                <button type="button" class="btn btn-info btn-circle btn-sm"><i class="fab fa-twitter"></i></button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
