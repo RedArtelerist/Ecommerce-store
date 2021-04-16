@@ -15,6 +15,7 @@ def user_logged_in_handler(sender, request, user, **kwargs):
 @receiver(user_logged_in)
 def get_user_cart(sender, user, request, **kwargs):
     try:
+        print("Login")
         user_cart = UserCart.objects.get(user=user)
 
         cart = Cart(request)
@@ -40,6 +41,7 @@ def get_user_cart(sender, user, request, **kwargs):
             request.session['coupon_id'] = None
 
     except UserCart.DoesNotExist:
+        print("Except")
         user_cart = UserCart.objects.create(user=user, coupon=0)
         request.session['coupon_id'] = None
     if not user_cart:

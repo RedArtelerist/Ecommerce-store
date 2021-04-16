@@ -43,5 +43,4 @@ urlpatterns = [
         name='review_dislike'),
 
     url(r'^lazy_load_posts/(?P<pk>\d+)/$', views.lazy_load_posts, name='lazy_load_posts'),
-
 ]

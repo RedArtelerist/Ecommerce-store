@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^wishlist/', include(('wishlist.urls', 'wishlist'), namespace='wishlist')),
     url(r'^cart/', include(('cart.urls', 'cart'), namespace='cart')),
     url(r'^order/', include(('orders.urls', 'orders'), namespace='orders')),
+    url(r'^profile/', include(('user_profile.urls', 'profile'), namespace='profile')),
     url(r'^coupons/', include(('coupons.urls', 'coupons'), namespace='coupons')),
 
 ]

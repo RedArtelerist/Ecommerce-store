@@ -1,0 +1,123 @@
+{% extends 'user_profile/base.html' %}
+{% load static %}
+
+{% block dop-style %}
+    <link rel="stylesheet" href="{% static 'css/user_profile/orders.css' %}">
+{% endblock %}
+
+{% block tab-content %}
+    <div class="tab-pane active" id="orders">
+        <div class="orders">
+            <div class="title-left">
+                <h3>My Orders</h3>
+            </div>
+        </div>
+        <form id="filter" method="get">
+            <div class="right-product-box">
+                <div class="product-item-filter row">
+                    <div class="col-12 col-sm-8 text-center text-sm-left">
+                        <div class="toolbar-sorter-right">
+                            <span>Filter</span>
+                            {{ filter.form.status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        {% for order in orders %}
+            <article class="card-order">
+                <header class="card-order-header"> Order ID: {{ order.order_id }}
+                    <a href="{% url 'profile:order_detail' order.order_id %}" class="btn btn-order-view" data-abc="true">View details</a>
+                </header>
+                <div class="card-body">
+                    <article class="card-order">
+                        <div class="card-body row">
+                            <div class="col-lg-3"> <strong>Order Date:</strong> <br>{{ order.created | date:'Y-m-d, H:i'}} </div>
+                            <div class="col"> <strong>Address:</strong> <br> {{ order.city }}, {{ order.address }} </div>
+                            <div class="col-lg-2"> <strong>Status:</strong> <br> {{ order.status }} </div>
+                            <div class="col-lg-2"> <strong>Total price</strong> <br> ${{ order.get_grand_total_cost }} </div>
+                        </div>
+                    </article>
+
+                    {% if order.status != "Canceled" %}
+                        <div class="track">
+                            <div class="step active">
+                                <span class="icon"> <i class="fas fa-hourglass-half"></i> </span>
+                                <span class="text">Pending</span>
+                            </div>
+                            <div class="step {% if order.status != "New" %}active{% endif %}">
+                                <span class="icon"> <i class="fa fa-check"></i> </span>
+                                <span class="text">Accepted</span>
+                            </div>
+                            <div class="step {% if order.status != "New" and order.status != "Accepted" %}active{% endif %}">
+                                <span class="icon"> <i class="fas fa-box-open"></i> </span>
+                                <span class="text">Preparing</span>
+                            </div>
+                            <div class="step {% if order.status != "New" and order.status != "Accepted" and order.status != "Preparing" %}active{% endif %}">
+                                <span class="icon"> <i class="fa fa-user"></i> </span>
+                                <span class="text">Transferred to the carrier</span>
+                            </div>
+                            <div class="step {% if order.status == "On the way" or order.status == "Delivered" or order.status == "Received" %}active{% endif %}">
+                                <span class="icon"> <i class="fas fa-truck"></i> </span>
+                                <span class="text">On the way</span>
+                            </div>
+                            <div class="step {% if order.status == "Delivered" or order.status == "Received" %}active{% endif %}">
+                                <span class="icon"> <i class="fas fa-box"></i> </span>
+                                <span class="text">Delivered</span>
+                            </div>
+                            <div class="step {% if order.status == "Received" %}active{% endif %}">
+                                <span class="icon"> <i class="fas fa-clipboard-check"></i> </span>
+                                <span class="text">Received</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="track">
+                            <div class="step active">
+                                <span class="icon"> <i class="fas fa-hourglass-half"></i> </span>
+                                <span class="text">Pending</span>
+                            </div>
+                            <div class="step active">
+                                <span class="icon"> <i class="fa fa-check"></i> </span>
+                                <span class="text">Accepted</span>
+                            </div>
+                            <div class="step active">
+                                <span class="icon"> <i class="fas fa-box-open"></i> </span>
+                                <span class="text">Preparing</span>
+                            </div>
+                            <div class="step canceled">
+                                <span class="icon"> <i class="fas fa-ban"></i> </span>
+                                <span class="text">Canceled</span>
+                            </div>
+                            <div class="step">
+                                <span class="icon"> <i class="fa fa-user"></i> </span>
+                                <span class="text">Transferred to the carrier</span>
+                            </div>
+                            <div class="step">
+                                <span class="icon"> <i class="fas fa-truck"></i> </span>
+                                <span class="text">On the way</span>
+                            </div>
+                            <div class="step">
+                                <span class="icon"> <i class="fas fa-box"></i> </span>
+                                <span class="text">Delivered</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var statusSelect = document.getElementById("id_status");
+
+        function changeOption(){
+            var selectedOption = statusSelect.options[statusSelect.selectedIndex];
+            document.getElementById("filter").submit();
+        }
+
+        statusSelect.addEventListener("change", changeOption);
+    </script>
+{% endblock %}

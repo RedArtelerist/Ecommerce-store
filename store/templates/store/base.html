@@ -148,7 +148,7 @@
                     <div class="our-link">
                         <ul>
                             {% if user.is_authenticated %}
-                                <li><a href="#">My Account</a></li>
+                                <li><a href="{% url 'profile:personal_info' %}">My Account</a></li>
                             {% else %}
                                 <li><a href="{% url 'accounts:login' %}">Login</a></li>
                                 <li><a href="{% url 'accounts:register' %}">Sign Up</a></li>

@@ -64,7 +64,16 @@ function showSucces(input) {
         formControl.className = "mb-3 order-form-control success";
 }
 
-//check email is valid
+function checkName(input) {
+    const re = /^[a-zA-Z]+$/;
+    if(re.test(input.value.trim())) {
+        showSucces(input);
+        return true;
+    }else {
+        showError(input,`${input.dataset.name} must contains only letters`);
+    }
+}
+
 function checkEmail(input) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if(re.test(input.value.trim())) {
@@ -85,7 +94,6 @@ function checkPhone(input) {
     }
 }
 
-
 //checkRequired fields
 function checkRequired(inputArr) {
     inputArr.forEach(function(input){
@@ -99,7 +107,6 @@ function checkRequired(inputArr) {
 }
 
 
-//check input Length
 function checkLength(input, min ,max) {
     if(input.value.length < min) {
         showError(input, `${input.dataset.name} must be at least ${min} characters`);
@@ -111,13 +118,20 @@ function checkLength(input, min ,max) {
     }
 }
 
+function validateName(input){
+     if(!checkLength(input, 3, 20))
+        return false;
+    else
+        return checkName(input);
+}
+
 function validate(){
-    var a = checkLength(customer_first_name, 3,20);
-    var b = checkLength(customer_last_name, 3,20);
+    var a = validateName(customer_first_name);
+    var b = validateName(customer_last_name);
     var c = checkLength(city, 3,50);
     var d = checkLength(address, 5,100);
-    var e = checkLength(recipient_first_name, 3,20);
-    var f = checkLength(recipient_last_name, 3,20);
+    var e = validateName(recipient_first_name);
+    var f = validateName(recipient_last_name);
 
     var m = checkEmail(customer_email);
     var l = checkEmail(recipient_email);

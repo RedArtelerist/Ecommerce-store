@@ -1,0 +1,224 @@
+{% extends 'user_profile/base.html' %}
+{% load static %}
+
+{% block dop-style %}
+    <link rel="stylesheet" href="{% static 'css/user_profile/orders.css' %}">
+{% endblock %}
+
+{% block tab-content %}
+    <div class="tab-pane active" id="order">
+        <div class="orders">
+            <div class="title-left">
+                <span style="float: right">{{ order.created |date:'Y-m-d, H:i' }}</span>
+                <h3>Order #{{ order.order_id }}</h3>
+            </div>
+        </div>
+
+        <article>
+            {% if order.status != "Canceled" %}
+                <div class="track">
+                    <div class="step active">
+                        <span class="icon"> <i class="fas fa-hourglass-half"></i> </span>
+                        <span class="text">Pending</span>
+                    </div>
+                    <div class="step {% if order.status != "New" %}active{% endif %}">
+                        <span class="icon"> <i class="fa fa-check"></i> </span>
+                        <span class="text">Accepted</span>
+                    </div>
+                    <div class="step {% if order.status != "New" and order.status != "Accepted" %}active{% endif %}">
+                        <span class="icon"> <i class="fas fa-box-open"></i> </span>
+                        <span class="text">Preparing</span>
+                    </div>
+                    <div class="step {% if order.status != "New" and order.status != "Accepted" and order.status != "Preparing" %}active{% endif %}">
+                        <span class="icon"> <i class="fa fa-user"></i> </span>
+                        <span class="text">Transferred to the carrier</span>
+                    </div>
+                    <div class="step {% if order.status == "On the way" or order.status == "Delivered" or order.status == "Received" %}active{% endif %}">
+                        <span class="icon"> <i class="fas fa-truck"></i> </span>
+                        <span class="text">On the way</span>
+                    </div>
+                    <div class="step {% if order.status == "Delivered" or order.status == "Received" %}active{% endif %}">
+                        <span class="icon"> <i class="fas fa-box"></i> </span>
+                        <span class="text">Delivered</span>
+                    </div>
+                    <div class="step {% if order.status == "Received" %}active{% endif %}">
+                        <span class="icon"> <i class="fas fa-clipboard-check"></i> </span>
+                        <span class="text">Received</span>
+                    </div>
+                </div>
+            {% else %}
+                <div class="track">
+                    <div class="step active">
+                        <span class="icon"> <i class="fas fa-hourglass-half"></i> </span>
+                        <span class="text">Pending</span>
+                    </div>
+                    <div class="step active">
+                        <span class="icon"> <i class="fa fa-check"></i> </span>
+                        <span class="text">Accepted</span>
+                    </div>
+                    <div class="step active">
+                        <span class="icon"> <i class="fas fa-box-open"></i> </span>
+                        <span class="text">Preparing</span>
+                    </div>
+                    <div class="step canceled">
+                        <span class="icon"> <i class="fas fa-ban"></i> </span>
+                        <span class="text">Canceled</span>
+                    </div>
+                    <div class="step">
+                        <span class="icon"> <i class="fa fa-user"></i> </span>
+                        <span class="text">Transferred to the carrier</span>
+                    </div>
+                    <div class="step">
+                        <span class="icon"> <i class="fas fa-truck"></i> </span>
+                        <span class="text">On the way</span>
+                    </div>
+                    <div class="step">
+                        <span class="icon"> <i class="fas fa-box"></i> </span>
+                        <span class="text">Delivered</span>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-sm-6 col-lg-6 mb-3">
+                    <div class="order-information">
+                        <div class="title-left">
+                            <h3>Order info</h3>
+                        </div>
+                        <article class="card">
+                            <header class="card-header header">Customer</header>
+                            <div class="card-body">
+                                <div> <strong>First Name:</strong> {{ order.customer_first_name }} </div>
+                                <div> <strong>Last Name:</strong> {{ order.customer_last_name }} </div>
+                                <div> <strong>Email:</strong> {{ order.customer_email }} </div>
+                                <div> <strong>Phone:</strong> {{ order.customer_phone }} </div>
+                            </div>
+                        </article>
+
+                         <article class="card">
+                            <header class="card-header header">Recipient</header>
+                            <div class="card-body">
+                                <div> <strong>First Name:</strong> {{ order.recipient_first_name }} </div>
+                                <div> <strong>Last Name:</strong> {{ order.recipient_last_name }} </div>
+                                <div> <strong>Email:</strong> {{ order.recipient_email }} </div>
+                            </div>
+                        </article>
+
+                        <article class="card">
+                            <header class="card-header header">Order address</header>
+                            <div class="card-body">
+                                <div> <strong>City:</strong> {{ order.city }} </div>
+                                <div> <strong>Address:</strong> {{ order.address }} </div>
+                                <div> <strong>Delivery:</strong> {{ order.delivery }} </div>
+                                <div> <strong>Payment:</strong> {{ order.paymentMethod }} </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-6 mb-3">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="odr-box">
+                                <div class="title-left">
+                                    <h3>Order composition</h3>
+                                </div>
+                                <div class='order-info'>
+                                    <div class='order-info-content'>
+                                        {% for item in order.items.all %}
+                                            {% with product=item.product %}
+                                                <table class='order-table'>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td><img src="{{ product.imageURL }}" class='full-width' alt="{{ product.name }}"/>
+                                                        </td>
+                                                        <td style="padding-left: 0">
+                                                            <a style="line-height: 0" href="{{ product.get_absolute_url }}"><span class='thin-1'>{{ product.name }}</span></a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <div class='qnt'>x{{ item.quantity }}</div>
+                                                            <div class='order-item-price'>₴{{ item.get_cost }}</div>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+
+                                                </table>
+                                            {% endwith %}
+                                            <div class='line'></div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-12">
+                            <div class="order-box">
+                                <div class="title-left">
+                                    <h3>My order</h3>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="font-weight-bold">Product</div>
+                                    <div class="ml-auto font-weight-bold">Total</div>
+                                </div>
+                                <hr class="my-1">
+                                <div class="d-flex">
+                                    <h4>Sub Total</h4>
+                                    <div class="ml-auto font-weight-bold"> ₴{{ order.get_total_cost }} </div>
+                                </div>
+                                <hr class="my-1">
+                                {% if order.discount %}
+                                    <div class="d-flex">
+                                    <h4>Coupon: ({{ order.discount }}%)</h4>
+                                    <div class="ml-auto font-weight-bold coupon">
+                                        <span> - ₴{{ order.get_discount }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="d-flex">
+                                    <h4>Shipping Cost</h4>
+                                    <div class="ml-auto font-weight-bold"> Free </div>
+                                </div>
+                                <hr>
+                                <div class="d-flex gr-total">
+                                    <h5>Grand Total</h5>
+                                    <div class="ml-auto h5"> ₴{{ order.get_grand_total_cost }} </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <a href="{% url 'profile:orders' %}" class="btn btn-orders" data-abc="true"> <i class="fa fa-chevron-left"></i> Back to orders</a>
+        {% if order.status == "New" or order.status == "Accepted" or order.status == "Preparing" %}
+            <form style="float: right" action="{% url 'profile:cancel_order' order.order_id %}" method="post">
+                {% csrf_token %}
+                 <div style="margin-bottom: 0" class="price-box-bar shopping-box">
+                    <button id="submit-btn" type="button" class="ml-auto btn hvr-hover" onClick="confSubmit(this.form);">Cancel</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var statusSelect = document.getElementById("id_status");
+
+        function changeOption(){
+            var selectedOption = statusSelect.options[statusSelect.selectedIndex];
+            document.getElementById("filter").submit();
+        }
+
+        statusSelect.addEventListener("change", changeOption);
+    </script>
+
+    <script type="text/javascript">
+        function confSubmit(form) {
+            if (confirm("Are you sure you want to cancel this order?")) {
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/user_profile/profile.css' %}">
+    {% block dop-style %}
+    {% endblock %}
+{% endblock %}
+{% block title %}
+    {{ title }}
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row gutters-sm">
+        <div class="col-md-4 d-none d-md-block">
+            <div class="card">
+                <div class="card-body">
+                    <nav class="nav flex-column nav-pills nav-gap-y-1">
+                        <a href="{% url 'profile:personal_info' %}" class="nav-item nav-link has-icon nav-link-faded {% if title == "Personal info" %}active{% endif %}">
+                            <i class="far fa-user"></i>
+                            <span class="nav-header">Profile Information</span>
+                        </a>
+                        <a href="{% url 'profile:account_settings' %}" class="nav-item nav-link has-icon nav-link-faded {% if title == "Account settings" %}active{% endif %}">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-header">Account Settings</span>
+                        </a>
+                        <a href="{% url 'profile:change_password' %}" class="nav-item nav-link has-icon nav-link-faded {% if title == "Change password" %}active{% endif %}">
+                            <i class="fas fa-key"></i>
+                            <span class="nav-header">Change password</span>
+                        </a>
+                        <a href="{% url 'profile:orders' %}" class="nav-item nav-link has-icon nav-link-faded {% if title == "Orders" %}active{% endif %}">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="nav-header">Orders</span>
+                        </a>
+                        <a href="#notification" class="nav-item nav-link has-icon nav-link-faded">
+                            <i class="far fa-bell"></i>
+                            <span class="nav-header">Notification</span>
+                        </a>
+                        <a href="#billing" class="nav-item nav-link has-icon nav-link-faded">
+                            <i class="far fa-credit-card"></i>
+                            <span class="nav-header">Billing</span>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header border-bottom mb-3 d-flex d-md-none">
+                    <ul class="nav nav-tabs card-header-tabs nav-gap-x-1" role="tablist">
+                        <li class="nav-item">
+                            <a href="{% url 'profile:personal_info' %}" class="nav-link has-icon {% if title == "Personal info" %}active{% endif %}">
+                                <i class="far fa-user"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'profile:account_settings' %}" class="nav-link has-icon {% if title == "Account settings" %}active{% endif %}">
+                                <i class="fas fa-cog"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'profile:change_password' %}" class="nav-link has-icon {% if title == "Change password" %}active{% endif %}">
+                                <i class="fas fa-key"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'profile:orders' %}" class="nav-link has-icon {% if title == "Orders" %}active{% endif %}">
+                                <i class="fas fa-shopping-bag"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#notification" class="nav-link has-icon">
+                                <i class="far fa-bell"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#billing" class="nav-link has-icon">
+                                <i class="far fa-credit-card"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body tab-content">
+                    {% block tab-content %}
+                    {% endblock tab-content %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

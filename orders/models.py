@@ -13,8 +13,8 @@ class Order(models.Model):
         ('Accepted', 'Accepted'),
         ('Preparing', 'Preparing'),
         ('Transferred to the carrier', 'Transferred to the carrier'),
-        ('Delivering', 'Delivering'),
-        ('Delivered to the department', 'Delivered to the department'),
+        ('On the way', 'On the way'),
+        ('Delivered', 'Delivered'),
         ('Received', 'Received'),
         ('Canceled', 'Canceled')
     )
@@ -70,6 +70,10 @@ class Order(models.Model):
         return round(total_cost * (self.discount / Decimal('100')))
 
     def get_total_cost(self):
+        total_cost = sum(item.get_cost() for item in self.items.all())
+        return total_cost
+
+    def get_grand_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost - self.get_discount()
 

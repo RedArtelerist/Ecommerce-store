@@ -1,0 +1,107 @@
+{% extends 'user_profile/base.html' %}
+{% load static %}
+
+{% block tab-content %}
+    <div class="tab-pane active" id="profile">
+        <form id="profileForm" class="needs-validation" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="info">
+                <div class="title-left">
+                    <h3>Profile information</h3>
+                </div>
+                {% include 'accounts/messages.html' %}
+                <div class="row">
+                    <div class="column">
+                        <div class="avatar-upload">
+                            <div class="avatar-edit">
+                                {{ profile_form.image }}
+                                <label for="imageUpload"></label>
+                            </div>
+                            <div class="avatar-preview">
+                                <div id="imagePreview" style="background-image: url('{{ user.profile.imageURL }}');"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="mb-3 order-form-control">
+                            <label for="id_first_name">First name <span style="color: red">*</span></label>
+                            {{ user_form.first_name }}
+                            <small>Error Message</small>
+                        </div>
+
+                         <div class="mb-3 order-form-control">
+                            <label for="id_last_name">Last name <span style="color: red">*</span></label>
+                            {{ user_form.last_name }}
+                            <small>Error Message</small>
+                        </div>
+
+                        <div class="mb-3 order-form-control">
+                            <label for="id_middle_name">Middle name</label>
+                            {{ profile_form.middle_name }}
+                            <small>Error Message</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                     <div class="col-md-6 mb-3 order-form-control">
+                         <label for="id_birthdate">Birthdate</label>
+                         {{ profile_form.birthdate }}
+                         <small>Error Message</small>
+                    </div>
+
+                     <div class="col-md-6 mb-3 order-form-control">
+                          <label for="id_phone">Mobile Phone</label>
+                          {{ profile_form.phone }}
+                          <small>Error Message</small>
+                     </div>
+
+                    <div class="col-md-6 mb-3 order-form-control">
+                          <label for="id_city">City</label>
+                          {{ profile_form.city }}
+                          <small>Error Message</small>
+                     </div>
+
+                    <div class="col-md-6 mb-3 order-form-control">
+                        <label>Gender</label>
+                        {% for g in profile_form.gender %}
+                            <div class="custom-control custom-radio">
+                                {{ g.tag }}
+                                <label class="custom-control-label" for="id_gender_{{ forloop.counter0 }}">
+                                    {{ g.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div style="margin-bottom: 0" class="price-box-bar d-flex shopping-box">
+                <button id="submit-btn" type="submit" class="ml-auto btn hvr-hover">Update</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        let userImage = '{{ user.profile.image }}';
+    </script>
+    <script src="{% static 'js/profile/personal_info.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+    reset();
+    function reset() {
+        if (user !== 'AnonymousUser') {
+            first_name.value = '{{ user.first_name }}';
+            last_name.value = '{{ user.last_name }}';
+            middle_name.value = '{{ user.profile.middle_name }}';
+            phone.value = '{{ user.profile.phone }}';
+            city.value = '{{ user.profile.city }}';
+            birthdate.value = '{{user.profile.birthdate|date:"Y-m-d" }}';
+        }
+    }
+    </script>
+{% endblock %}

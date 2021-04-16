@@ -1617,12 +1617,19 @@
  .filter-sidebar-left{
      margin-bottom: 20px;
 }
- .title-left{
+.title-left{
      font-size: 16px;
      border-bottom: 3px solid #010101;
      margin-bottom: 20px;
 }
- .title-left h3{
+
+.title-left-del{
+     font-size: 16px;
+     border-bottom: 3px solid #d33b33 !important;
+     margin-bottom: 10px;
+}
+
+ .title-left h3, .title-left-del h3{
      font-weight: 700;
 }
  .list-group-item {

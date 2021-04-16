@@ -1,7 +1,6 @@
 import django_filters
 from django.db.models import Case, When, Value, F, ExpressionWrapper, Q
 from django.forms import *
-
 from store.models import *
 
 

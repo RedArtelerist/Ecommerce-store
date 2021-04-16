@@ -20,7 +20,7 @@ const checkUsername = () => {
     } else if (!isBetween(username.length, min, max)) {
         showError(usernameEl, `Username must be between ${min} and ${max} characters.`)
     }else if(!isUserNameValid(username)){
-        showError(usernameEl, 'Username must contain letters, numbers and some special characters _-.')
+        showError(usernameEl, 'Username must contain letters, numbers and some special character _')
     } else {
         showSuccess(usernameEl);
         valid = true;
@@ -108,7 +108,8 @@ const checkConfirmPassword = () => {
 };
 
 const isUserNameValid = (username) => {
-    const re = /^[a-zA-Z0-9_./-]+$/;
+    //const re = /^[a-zA-Z0-9_./-]+$/;
+    const re =/^[a-zA-Z0-9_]{2,}[a-zA-Z]+[0-9]*$/;
     return re.test(username);
 }
 

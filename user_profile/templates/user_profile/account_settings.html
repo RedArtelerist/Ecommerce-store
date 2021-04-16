@@ -1,0 +1,52 @@
+{% extends 'user_profile/base.html' %}
+{% load static %}
+
+{% block tab-content %}
+    <div class="tab-pane active" id="password_change">
+        <form id="changeUsername" class="needs-validation" method="post">
+            {% csrf_token %}
+            <div class="account-settings">
+                <div class="title-left">
+                    <h3>Account settings</h3>
+                </div>
+                {% include 'accounts/messages.html' %}
+            </div>
+            <small id="usernameHelp" class="form-text text-muted">After changing your username, your old username becomes available for anyone else to claim.</small>
+             <div class="mb-3 order-form-control">
+                 <label for="username">Username</label>
+                 {{ form.username }}
+                 <small>Error Message</small>
+            </div>
+            <div style="margin-bottom: 10px" class="price-box-bar shopping-box">
+                <button id="submit-btn" type="submit" class="ml-auto btn hvr-hover">Change</button>
+            </div>
+        </form>
+
+        <form action="{% url 'profile:delete_account' %}" method="post">
+            {% csrf_token %}
+            <div class="delete-account">
+                <div class="title-left-del">
+                    <h3 style="color: #dc3545">Delete Account</h3>
+                </div>
+            </div>
+            <div class="form-group">
+                <p class="font-size-sm">Once you delete your account, there is no going back. Please be certain.</p>
+            </div>
+            <button class="btn btn-danger" type="button" onClick="confSubmit(this.form);">Delete Account</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/profile/account_settings.js' %}"></script>
+    <script>
+        username.value = '{{ user.username }}';
+    </script>
+    <script type="text/javascript">
+        function confSubmit(form) {
+            if (confirm("Are you sure you want to delete your account?")) {
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}

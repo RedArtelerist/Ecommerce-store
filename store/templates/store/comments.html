@@ -3,7 +3,15 @@
 
 {% for comment in comments %}
     <div class="media-block">
-        <a class="media-left" href="#"><img class="img-circle img-small" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
+        {% if comment.user %}
+            <a class="media-left" href="#">
+                <img class="img-circle img-small" alt="Profile Picture" src="{{ comment.user.profile.imageURL }}">
+            </a>
+        {% else %}
+            <a class="media-left" href="#">
+                <img class="img-circle img-small" alt="Profile Picture" src="{% static 'images/profiles/placeholder.png' %}">
+            </a>
+        {% endif %}
         <div class="media-body">
             {% if user == comment.user %}
                 <form method="post" action="{% url 'delete-comment' comment.id %}">
@@ -50,7 +58,16 @@
             <div class="collapse" id="reply_{{ comment.id }}">
             {% for reply in comment.replies %}
                 <div class="media-block">
-                    <a class="media-left" href="#"><img class="img-circle img-small" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar2.png"></a>
+                    {% if reply.user %}
+                        <a class="media-left" href="#">
+                            <img class="img-circle img-small" alt="Profile Picture" src="{{ reply.user.profile.imageURL }}">
+                        </a>
+                    {% else %}
+                        <a class="media-left" href="#">
+                            <img class="img-circle img-small" alt="Profile Picture" src="{% static 'images/profiles/placeholder.png' %}">
+                        </a>
+                    {% endif %}
+
                     <div class="media-body">
                         {% if user == reply.user %}
                             <form method="post" action="{% url 'delete-comment' reply.id %}">

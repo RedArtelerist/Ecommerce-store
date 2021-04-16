@@ -1,6 +1,6 @@
 import json
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import *
+from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
@@ -10,7 +10,7 @@ from cart.forms import CartAddProductForm
 from store.filter import ProductFilter, SearchProductFilter
 from store.forms import CommentForm, ReviewForm
 from store.models import *
-from store.utils import get_products_by_filter_and_pagination
+from store.utils import get_products_by_filter_and_pagination, get_price
 
 
 def index(request):
@@ -55,31 +55,6 @@ def product_list(request, category_slug=None):
                'max_price': price['max_price']}
 
     return render(request, 'store/product_list.html', context)
-
-
-def get_price(request, queryset):
-    companies = request.GET.getlist('company')
-    years = request.GET.getlist('year')
-    name = request.GET.get('name')
-    order = request.GET.get('order')
-
-    if len(companies) != 0:
-        queryset = queryset.filter(company__slug__in=companies)
-
-    if len(years) != 0:
-        queryset = queryset.filter(year__in=years)
-
-    if name != "" and name is not None:
-        queryset = queryset.filter(name__contains=name)
-
-    if order == 'action':
-        queryset = queryset.filter(discount__gte=5)
-
-    price = queryset.aggregate(
-        min_price=Min((Value(1.0) - F('discount') / Value(100.0)) * F('price'), output_field=IntegerField()),
-        max_price=Max((Value(1.0) - F('discount') / Value(100.0)) * F('price'), output_field=IntegerField())
-    )
-    return price
 
 
 def product_detail(request, id, slug):
