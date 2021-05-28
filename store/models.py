@@ -11,11 +11,15 @@ from .validations import *
 from django.db import models
 
 
+def upload_path(instance, filename):
+    return '/static/images'.join([filename])
+
+
 class Category(MPTTModel):
     name = models.CharField('Name', max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='images/placeholder.png')
+    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.png')
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -52,7 +56,7 @@ class Company(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     country = models.CharField('Country', max_length=15)
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='images/placeholder.png')
+    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.png')
 
     class Meta:
         ordering = ('name',)
@@ -113,7 +117,7 @@ class Product(models.Model):
         try:
             url = self.image.url
         except:
-            url = 'images/placeholder.jpg'
+            url = 'placeholder.jpg'
         return url
 
     class Meta:
