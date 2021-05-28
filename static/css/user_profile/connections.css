@@ -1,0 +1,31 @@
+.networks-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin: 0;
+    border: 2px solid #e9e9e9;
+    border-radius: 4px;
+    background: none;
+    text-align: left;
+    font-size: 14px;
+    color: #3e77aa;
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+}
+
+.networks-button__header{
+    line-height: normal;
+    font-size: 1.1em;
+}
+
+.networks-button__name {
+    font-size: 1.3em;
+    color: #221f1f;
+    font-weight: 800;
+}
+
+.connected{
+    color: black;
+}
+

@@ -176,7 +176,7 @@
                                 {% endif %}
                                 <div class="d-flex">
                                     <h4>Shipping Cost</h4>
-                                    <div class="ml-auto font-weight-bold"> Free </div>
+                                    <div class="ml-auto font-weight-bold"> {% if order.delivery.price == 0 %} Free {% else %} ₴{{ order.delivery.price }} {% endif %} </div>
                                 </div>
                                 <hr>
                                 <div class="d-flex gr-total">

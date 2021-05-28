@@ -33,13 +33,9 @@
                             <i class="fas fa-shopping-bag"></i>
                             <span class="nav-header">Orders</span>
                         </a>
-                        <a href="#notification" class="nav-item nav-link has-icon nav-link-faded">
-                            <i class="far fa-bell"></i>
-                            <span class="nav-header">Notification</span>
-                        </a>
-                        <a href="#billing" class="nav-item nav-link has-icon nav-link-faded">
-                            <i class="far fa-credit-card"></i>
-                            <span class="nav-header">Billing</span>
+                        <a href="{% url 'profile:connections' %}" class="nav-item nav-link has-icon nav-link-faded {% if title == "Connections" %}active{% endif %}">
+                            <i class="fas fa-link"></i>
+                            <span class="nav-header">Connections</span>
                         </a>
                     </nav>
                 </div>
@@ -70,13 +66,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#notification" class="nav-link has-icon">
-                                <i class="far fa-bell"></i>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#billing" class="nav-link has-icon">
-                                <i class="far fa-credit-card"></i>
+                            <a href="{% url 'profile:connections' %}" class="nav-link has-icon {% if title == "Connections" %}active{% endif %}">
+                                <i class="fas fa-link"></i>
                             </a>
                         </li>
                     </ul>

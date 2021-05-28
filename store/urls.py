@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from django.urls import path
+from django.urls import path, include
 from store import views
 from cart import views as cart_views
 from store.models import Comment, LikeDislike, Review
@@ -41,6 +41,4 @@ urlpatterns = [
     url(r'^review/(?P<pk>\d+)/dislike/$',
         login_required(views.VotesView.as_view(model=Review, vote_type=LikeDislike.DISLIKE)),
         name='review_dislike'),
-
-    url(r'^lazy_load_posts/(?P<pk>\d+)/$', views.lazy_load_posts, name='lazy_load_posts'),
 ]

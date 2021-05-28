@@ -1,4 +1,6 @@
 import json
+
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
@@ -18,7 +20,6 @@ def index(request):
 
     discount_products = Product.objects.filter(discount__gte=5, available=True).order_by('-discount')[:16]
     best_seller = Product.objects.filter(available=True).order_by('-sales')[:16]
-    #newest_products =
 
     return render(request, 'store/home.html',
                   {'title': 'Home page',
@@ -60,21 +61,7 @@ def product_list(request, category_slug=None):
 def product_detail(request, id, slug):
     product = get_object_or_404(Product, id=id, slug=slug)
     cart_product_form = CartAddProductForm()
-
-    per_page = 3
     comments = product.comments()
-    paginator = Paginator(comments, per_page)
-    page = request.GET.get('page')
-    try:
-        comments = paginator.page(page)
-    except PageNotAnInteger:
-        comments = paginator.page(1)
-    except EmptyPage:
-        if request.is_ajax():
-            return HttpResponse('')
-        comments = paginator.page(paginator.num_pages)
-    if request.is_ajax():
-        return render(request, 'store/comments.html', {'comments': comments})
 
     return render(request, 'store/product_detail.html',
                   {'product': product,
@@ -156,6 +143,7 @@ def add_comment(request, pk):
 
 
 @require_POST
+@login_required(login_url='/accounts/login/')
 def delete_comment(request, id):
     comment = Comment.objects.get(pk=id)
     product = comment.product
@@ -163,22 +151,21 @@ def delete_comment(request, id):
     return redirect(product.get_absolute_url())
 
 
+@login_required(login_url='/accounts/login/')
 @require_POST
 def add_review(request, pk):
-    if request.user.is_authenticated:
-        form = ReviewForm(request.POST)
-        product = Product.objects.get(id=pk)
-        if form.is_valid():
-            form = form.save(commit=False)
+    form = ReviewForm(request.POST)
+    product = Product.objects.get(id=pk)
+    if form.is_valid():
+        form = form.save(commit=False)
 
-            if request.user.is_authenticated:
-                form.user = request.user
+        if request.user.is_authenticated:
+            form.user = request.user
 
-            form.product = product
-            form.save()
+        form.product = product
+        form.save()
 
-        return redirect(product.get_absolute_url())
-    return redirect('/login/')
+    return redirect(product.get_absolute_url())
 
 
 @require_POST
@@ -219,30 +206,3 @@ class VotesView(View):
             }),
             content_type="application/json"
         )
-
-
-def lazy_load_posts(request, pk):
-    product = Product.objects.get(pk=pk)
-    page = request.POST.get('page')
-    comments = product.comments()
-
-    results_per_page = 3
-    paginator = Paginator(comments, results_per_page)
-    try:
-        comments = paginator.page(page)
-    except PageNotAnInteger:
-        comments = paginator.page(2)
-    except EmptyPage:
-        comments = paginator.page(paginator.num_pages)
-
-    if request.user.is_authenticated:
-        user = request.user
-    else:
-        user = None
-
-    # build a html posts list with the paginated posts
-    comments_html = loader.render_to_string('store/comments.html', {'comments': comments, 'user': user})
-
-    # package output data and return it as a JSON object
-    output_data = {'comments_html': comments_html, 'has_next': comments.has_next()}
-    return JsonResponse(output_data)

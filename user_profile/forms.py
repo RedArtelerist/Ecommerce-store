@@ -1,7 +1,7 @@
 from itertools import chain
 
 from django import forms
-from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
 from django.contrib.auth.models import User
 from django.forms import RadioSelect
 from django.utils.encoding import force_text
@@ -62,3 +62,12 @@ class ChangeUserNameForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username']
+
+
+class PasswordSetForm(AdminPasswordChangeForm):
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_new_password1', 'class': 'form-control', 'type': 'password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'id_new_password2', 'class': 'form-control', 'type': 'password'}))
+
+    class Meta:
+        model = User
+        fields = ['password1', 'password2']

@@ -7,35 +7,28 @@ from store.models import Product, Category
 from wishlist.wishlist import WishList
 
 
+@login_required(login_url='/accounts/login/')
 def wishlist_add(request, product_id):
-    if request.user.is_authenticated:
-        wishlist = WishList(request)
-        product = get_object_or_404(Product, id=product_id)
-        wishlist.add(product=product)
-        update_cart_in_all_user_sessions(request)
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-    return redirect('/')
+    wishlist = WishList(request)
+    product = get_object_or_404(Product, id=product_id)
+    wishlist.add(product=product)
+    update_cart_in_all_user_sessions(request)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required(login_url='/accounts/login/')
 def wishlist_remove(request, product_id):
-    if request.user.is_authenticated:
-        wishlist = WishList(request)
-        product = get_object_or_404(Product, id=product_id)
-        wishlist.remove(product)
-
-        update_cart_in_all_user_sessions(request)
-        return redirect('wishlist:wishlist_detail')
-
-    return redirect('/')
+    wishlist = WishList(request)
+    product = get_object_or_404(Product, id=product_id)
+    wishlist.remove(product)
+    update_cart_in_all_user_sessions(request)
+    return redirect('wishlist:wishlist_detail')
 
 
+@login_required(login_url='/accounts/login/')
 def wishlist_detail(request):
-    if request.user.is_authenticated:
-        wishlist = WishList(request)
+    wishlist = WishList(request)
+    return render(request, 'wishlist/detail.html', {'wishlist': wishlist})
 
-        return render(request, 'wishlist/detail.html', {'wishlist': wishlist})
-
-    return redirect('/')
 
 

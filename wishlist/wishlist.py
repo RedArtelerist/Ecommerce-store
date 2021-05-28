@@ -5,7 +5,6 @@ from store.models import Product
 
 class WishList(object):
     def __init__(self, request):
-        """Инициализируем wishlist"""
         self.session = request.session
         wishlist = self.session.get(settings.WISHLIST_SESSION_ID)
         if not wishlist:
@@ -14,7 +13,6 @@ class WishList(object):
         self.wishlist = wishlist
 
     def __iter__(self):
-        """Перебор элементов в wishlist и получение продуктов из базы данных."""
         product_ids = self.wishlist.keys()
         # получение объектов product и добавление их в wishlist
         products = Product.objects.filter(id__in=product_ids)
@@ -26,11 +24,9 @@ class WishList(object):
             yield item
 
     def __len__(self):
-        """Подсчет всех товаров в wishlist."""
         return len(self.wishlist.values())
 
     def add(self, product):
-        """Добавить продукт в wishlist или обновить его количество."""
         product_id = str(product.id)
         if product_id not in self.wishlist:
             self.wishlist[product_id] = {}
@@ -39,7 +35,6 @@ class WishList(object):
             self.remove(product)
 
     def remove(self, product):
-        """Удаление товара из wishlist."""
         product_id = str(product.id)
         if product_id in self.wishlist:
             del self.wishlist[product_id]

@@ -104,14 +104,21 @@
                             <div class="title-left">
                                 <h3>Shipping Method</h3>
                             </div>
+
+                            {{ form.instance.delivary.name }}
+
                             <div class="mb-4">
-                                {% for radio in form.delivery %}
+
+                                {% for delivery in deliveries %}
                                     <div class="custom-control custom-radio">
-                                        {{ radio.tag }}
+                                        <input type="radio" name="delivery" value="{{ delivery.id }}" class="custom-control-input" id="id_delivery_{{ forloop.counter0 }}"
+                                        data-price="{{ delivery.price }}"{% if forloop.counter0 == 0 %} checked{% endif %}>
                                         <label class="custom-control-label" for="id_delivery_{{ forloop.counter0 }}">
-                                            {{ radio.choice_label }}
+                                            {{ delivery.name }}
                                         </label>
+                                        <span class="float-right font-weight-bold">{% if delivery.price == 0 %}FREE{% else %}₴{{ delivery.price }}{% endif %}</span>
                                     </div>
+                                    <div class="ml-4 mb-2 small">{{ delivery.description }}</div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -186,10 +193,6 @@
                                 <h4>Sub Total</h4>
                                 <div class="ml-auto font-weight-bold"> ₴{{ cart.get_total_price }} </div>
                             </div>
-                            <div class="d-flex">
-                                <h4>Discount</h4>
-                                <div class="ml-auto font-weight-bold"> ₴ 40 </div>
-                            </div>
                             <hr class="my-1">
                             {% if cart.coupon %}
                                 <div class="d-flex">
@@ -200,13 +203,13 @@
                             </div>
                             {% endif %}
                             <div class="d-flex">
-                                <h4>Shipping Cost</h4>
-                                <div class="ml-auto font-weight-bold"> Free </div>
+                                <h4>Delivery Cost</h4>
+                                <div id="delivery_price" class="ml-auto font-weight-bold"> Free </div>
                             </div>
                             <hr>
                             <div class="d-flex gr-total">
                                 <h5>Grand Total</h5>
-                                <div class="ml-auto h5"> ₴{{ cart.get_total_price_after_discount }} </div>
+                                <div class="ml-auto h5"> ₴<span id="grand_total">{{ cart.get_total_price_after_discount }}</span> </div>
                             </div>
                             <hr>
                         </div>
@@ -215,7 +218,9 @@
                     <div class="price-box-bar col-12 d-flex shopping-box">
                         <button id="order-submit-btn" form="orderForm" type="submit" class="ml-auto btn hvr-hover">Place Order</button>
                     </div>
+
                 </div>
+                <div id="paypal-button-container"></div>
             </div>
 
         </div>
@@ -225,11 +230,99 @@
 {% endblock %}
 
 {% block script %}
+
     <script src="{% static 'js/main/order.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
     <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8dhGOLmLiQ4YQOf1wzQktd0oNI7iga80&libraries=places&callback=initMap"></script>-->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=AdeTBfKQpcdnrMliYc3BrK8UEvyZy9l8kyLu23qTwL-xJgWn6n39d7pIBKkSewzVYnjnS9lJHuviCCN1&currency=RUB"></script>
+
+    <script>
+        let grand_total = document.getElementById("grand_total");
+        let total = '{{ cart.get_total_price_after_discount }}';
+        let delivery_price = document.getElementById("delivery_price");
+        let deliveries = document.getElementsByName("delivery");
+        let grand = total;
+
+        for (let i = 0; i < deliveries.length; i++) {
+            deliveries[i].addEventListener('change', function() {
+                if(this.dataset.price === '0')
+                    delivery_price.innerText = "Free";
+                else
+                    delivery_price.innerText = "₴" + this.dataset.price;
+                recalculate_total(this.dataset.price);
+            });
+        }
+
+        function recalculate_total(delivery_price){
+            grand = parseInt(total) + parseInt(delivery_price);
+            grand_total.innerText = grand;
+            if(document.getElementById("id_paymentMethod_0").checked !== true)
+                RenderPaypalButton();
+        }
+
+    </script>
+
+    <script>
+        let methods = document.getElementsByName("paymentMethod");
+
+        for (let i = 0; i < methods.length; i++) {
+            methods[i].addEventListener('change', function() {
+                if(this.value === "Card" || this.value === "PayPal") {
+                    submit.hidden = true;
+                    RenderPaypalButton();
+                }
+                else {
+                    document.querySelector('#paypal-button-container').innerHTML = "";
+                    submit.hidden = false;
+                }
+            });
+        }
+
+        function RenderPaypalButton() {
+            document.querySelector('#paypal-button-container').innerHTML = "";
+            console.log(grand);
+            paypal.Buttons({
+                style: {
+                    color: 'blue',
+                    shape: 'pill',
+                    size: 'responsive',
+                },
+                funding:
+                {
+                    disallowed: [ paypal.FUNDING.CARD ]
+                },
+                // Set up the transaction
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: grand,
+                            }
+                        }]
+                    });
+                },
+
+                onClick: function(data, actions) {
+                    if (!validate()) {
+                        return actions.reject();
+                    } else {
+                        return actions.resolve();
+                    }
+                },
+
+                // Finalize the transaction
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        console.log("Success");
+                        form.submit();
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+    </script>
 
     <script>
         if(user !== 'AnonymousUser') {
@@ -241,6 +334,7 @@
            recipient_last_name.value = customer_last_name.value;
            recipient_email.value = customer_email.value;
         }
-        console.log('{{ request.session.cart }}')
     </script>
+
+
 {% endblock %}

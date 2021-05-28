@@ -1,0 +1,138 @@
+{% extends 'user_profile/base.html' %}
+{% load static %}
+
+{% block dop-style %}
+    <link rel="stylesheet" href="{% static 'css/user_profile/connections.css' %}">
+{% endblock %}
+
+{% block tab-content %}
+    <div class="tab-pane active" id="connections">
+        <div class="account-connections">
+            <div class="title-left">
+                <h3>Account connections</h3>
+            </div>
+        </div>
+
+        <div class="google">
+            {% if google_login %}
+                <p class="connected">Connected as <span style="font-weight: 800">{{ google_login.uid }}</span></p>
+                {% if can_disconnect %}
+                    <form method="post" action="{% url 'accounts:social:disconnect' 'google-oauth2' %}">
+                        {% csrf_token %}
+                       <button type="submit" class="networks-button">
+                            <img src="https://img.icons8.com/fluent/48/000000/google-logo.png" alt=""/>
+                            <div class="networks-button__header">
+                                <p class="networks-button__name">Google</p>
+                                <p style="color: #dc3545">Cancel connection</p>
+                            </div>
+                        </button>
+                    </form>
+                {% else %}
+                    <button type="button" class="networks-button" disabled>
+                        <img src="https://img.icons8.com/fluent/48/000000/google-logo.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Google</p>
+                            <p style="color: #dc3545">Cancel connection</p>
+                        </div>
+                    </button>
+
+                    <p style="color: #dc3545">You must <a href="{% url 'profile:change_password' %}">define a password</a> for your account before disconnecting from Google.</p>
+                {% endif %}
+            {% else %}
+               <form method="post" action="{% url 'accounts:social:begin' 'google-oauth2' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="networks-button">
+                        <img src="https://img.icons8.com/fluent/48/000000/google-logo.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Google</p>
+                            <p> Connect with social  </p>
+                        </div>
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <div class="facebook">
+            {% if facebook_login %}
+                <p>Connected as <a style="font-weight: 800" href="{{ facebook_login.extra_data.profile_url }}" target="_blank">{{ facebook_login.extra_data.name }}</a></p>
+                {% if can_disconnect %}
+                    <form method="post" action="{% url 'accounts:social:disconnect' 'facebook' %}">
+                        {% csrf_token %}
+                         <button type="submit" class="networks-button">
+                            <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt=""/>
+                            <div class="networks-button__header">
+                                <p class="networks-button__name">Facebook</p>
+                                <p style="color: #dc3545">Cancel connection</p>
+                            </div>
+                        </button>
+                    </form>
+                {% else %}
+                    <button type="button" class="networks-button" disabled>
+                        <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Facebook</p>
+                            <p style="color: #dc3545">Cancel connection</p>
+                        </div>
+                    </button>
+                    <p style="color: #dc3545">You must <a href="{% url 'profile:change_password' %}">define a password</a> for your account before disconnecting from Facebook.</p>
+                {% endif %}
+            {% else %}
+                <form method="post" action="{% url 'accounts:social:begin' 'facebook' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="networks-button">
+                        <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Facebook</p>
+                            <p> Connect with social  </p>
+                        </div>
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+        <hr>
+
+        <div class="twitter">
+            {% if twitter_login %}
+                <p>Connected as <a style="font-weight: 800" href="https://twitter.com/{{ twitter_login.extra_data.access_token.screen_name }}/" target="_blank">@{{ twitter_login.extra_data.access_token.screen_name }}</a></p>
+                {% if can_disconnect %}
+                    <form method="post" action="{% url 'accounts:social:disconnect' 'twitter' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="networks-button">
+                            <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt=""/>
+                            <div class="networks-button__header">
+                                <p class="networks-button__name">Twitter</p>
+                                <p style="color: #dc3545">Cancel connection</p>
+                            </div>
+                        </button>
+                    </form>
+                {% else %}
+                    <button type="button" class="networks-button" disabled>
+                        <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Twitter</p>
+                            <p style="color: #dc3545">Cancel connection</p>
+                        </div>
+                    </button>
+                    <p style="color: #dc3545">You must <a href="{% url 'profile:change_password' %}">define a password</a> for your account before disconnecting from Twitter.</p>
+                {% endif %}
+            {% else %}
+                <form method="post" action="{% url 'accounts:social:begin' 'twitter' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="networks-button">
+                        <img src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt=""/>
+                        <div class="networks-button__header">
+                            <p class="networks-button__name">Twitter</p>
+                            <p> Connect with social  </p>
+                        </div>
+                    </button>
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

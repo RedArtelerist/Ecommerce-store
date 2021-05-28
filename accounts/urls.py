@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.urls import path
+from django.urls import path, include
 from accounts import views, utils
 
 urlpatterns = [
@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^logout/', views.logout_request, name='logout'),
     path('password_reset/', utils.password_reset_request, name='password_reset'),
     path('reset/<uidb64>/<token>', utils.password_reset_confirm, name='password_reset_confirm'),
+    url(r'^oauth/', include('social_django.urls', namespace='social')),
+
 ]

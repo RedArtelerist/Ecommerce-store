@@ -16,7 +16,7 @@ SECRET_KEY = 'tmq=gn!85tfbz1k^c4@q+0%i%9yu53$-7@!huk6(5c$paa((w3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ecommerce-wayshop.herokuapp.com']
 
 
 # Application definition
@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'crispy_forms',
     'ckeditor',
     'ckeditor_uploader',
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'django_countries',
     'django_filters',
     'mptt',
+    'social_django',
 
     'accounts.apps.AccountsConfig',
     'store.apps.StoreConfig',
@@ -51,6 +53,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'EcommerceStore.urls'
@@ -77,10 +82,32 @@ TEMPLATES = [
                 'store.context_processors.get_categories',
                 'cart.context_processors.cart',
                 'wishlist.context_processors.wishlist',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'accounts:social'
+
+LOGIN_URL = 'accounts:login'
+LOGOUT_URL = 'accounts:logout'
+LOGIN_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/profile/connections/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/profile/connections/'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+SESSION_COOKIE_SECURE = False
 
 WSGI_APPLICATION = 'EcommerceStore.wsgi.application'
 
@@ -230,3 +257,41 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'redartelerist.host02@gmail.com'
 EMAIL_HOST_PASSWORD = 'xoaf34839dajad'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    #'social_core.pipeline.social_auth.social_user',
+    'user_profile.pipeline.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    #'social_core.pipeline.user.user_details',
+    'user_profile.pipeline.user_details'
+)
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482171365765-ep9fj7c3mb984h43cgtj99jhqtelghff.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'WwwMAuSzKMpQfxJjIheNCn_t'
+
+SOCIAL_AUTH_FACEBOOK_KEY = '1254395534958144'
+SOCIAL_AUTH_FACEBOOK_SECRET = '7185d1ae004172ffb78065894cec2b21'
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_link']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+  'fields': 'id, name, email, link'
+}
+SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
+    ('name', 'name'),
+    ('email', 'email'),
+    ('link', 'profile_url'),
+]
+
+SOCIAL_AUTH_TWITTER_KEY = 'ejqf1qNIu5275OcvefnnhulSl'
+SOCIAL_AUTH_TWITTER_SECRET = 'vsHp8juQlWjlUdwkw8BJEeS3vl6e0Vx02yxZLFeTZYA7A6msBm'
+
+if os.getcwd() == '/app':
+    DEBUG = False

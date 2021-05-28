@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
+from social_django.models import UserSocialAuth
 
 from orders.models import Order
 from user_profile.filter import OrderFilter
-from user_profile.forms import ProfileForm, UserForm, PasswordChangingForm, ChangeUserNameForm
+from user_profile.forms import ProfileForm, UserForm, PasswordChangingForm, ChangeUserNameForm, PasswordSetForm
 
 
 @login_required
@@ -33,20 +33,28 @@ def personal_info(request):
 
 @login_required
 def change_password(request):
+    if request.user.has_usable_password():
+        PasswordForm = PasswordChangingForm
+        title = 'Change password'
+    else:
+        PasswordForm = PasswordSetForm
+        title = 'Set password'
+
     if request.method == 'POST':
-        form = PasswordChangingForm(request.POST, instance=request.user)
+        form = PasswordForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
             return redirect('profile:change_password')
         else:
+            print(form.errors)
             messages.error(request, 'Your old password is incorrect')
             return redirect('profile:change_password')
     else:
-        form = PasswordChangingForm(request.user)
+        form = PasswordForm(request.user)
     return render(request, 'user_profile/change_password.html', {
-        'title': 'Change password',
+        'title': title,
         'form': form
     })
 
@@ -108,3 +116,34 @@ def cancel_order(request, order_id):
     order.status = 'Canceled'
     order.save()
     return redirect('profile:order_detail', order_id)
+
+
+@login_required
+def connections(request):
+    user = request.user
+
+    try:
+        google_login = user.social_auth.get(provider='google-oauth2')
+    except UserSocialAuth.DoesNotExist:
+        google_login = None
+
+    try:
+        twitter_login = user.social_auth.get(provider='twitter')
+    except UserSocialAuth.DoesNotExist:
+        twitter_login = None
+
+    try:
+        facebook_login = user.social_auth.get(provider='facebook')
+    except UserSocialAuth.DoesNotExist:
+        facebook_login = None
+
+    can_disconnect = (user.social_auth.count() > 1 or user.has_usable_password())
+
+    return render(request, 'user_profile/connections.html', {
+        'title': 'Connections',
+        'google_login': google_login,
+        'twitter_login': twitter_login,
+        'facebook_login': facebook_login,
+        'can_disconnect': can_disconnect
+    })
+

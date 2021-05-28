@@ -1,10 +1,22 @@
 from decimal import Decimal
-
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from coupons.models import Coupon
 from store.models import Product
+
+
+class Delivery(models.Model):
+    name = models.CharField(max_length=30)
+    description = models.TextField(max_length=100, blank=True)
+    price = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = 'Delivery'
+        verbose_name_plural = 'Deliveries'
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class Order(models.Model):
@@ -23,13 +35,13 @@ class Order(models.Model):
         ('Cash', 'Cash'),
         ('Card', 'Card'),
         ('PayPal', 'PayPal'),
-        ('PrivatPay', 'PrivatPay')
     )
 
     DELIVERY = (
         ('Courier', 'Courier'),
         ('Post office', 'Post office')
     )
+
     order_id = models.CharField(max_length=15)
     customer_first_name = models.CharField(max_length=20)
     customer_last_name = models.CharField(max_length=30)
@@ -41,7 +53,7 @@ class Order(models.Model):
     address = models.CharField(max_length=250)
 
     status = models.CharField(max_length=40, choices=STATUS, default='New')
-    delivery = models.CharField(max_length=15, choices=DELIVERY, default='Courier')
+    delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, default=1)
     paymentMethod = models.CharField(max_length=20, choices=PAYMENT, default='Cash')
 
     recipient_first_name = models.CharField(max_length=20)
@@ -75,7 +87,7 @@ class Order(models.Model):
 
     def get_grand_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
-        return total_cost - self.get_discount()
+        return total_cost - self.get_discount() + self.delivery.price
 
 
 class OrderItem(models.Model):

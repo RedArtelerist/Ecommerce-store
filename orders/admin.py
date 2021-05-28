@@ -1,5 +1,5 @@
 from django.contrib import admin
-from orders.models import OrderItem, Order
+from orders.models import OrderItem, Order, Delivery
 
 
 class OrderItemInline(admin.TabularInline):
@@ -40,3 +40,9 @@ class OrderAdmin(admin.ModelAdmin):
             "fields": (('coupon', 'discount'),)
         }),
     )
+
+
+@admin.register(Delivery)
+class DeliveryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description', 'price']
+    list_editable = ['price']

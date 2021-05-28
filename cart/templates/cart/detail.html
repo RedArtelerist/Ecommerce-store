@@ -80,11 +80,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-6 col-sm-6">
-                    <div class="update-box">
-                        <input value="Update Cart" type="submit">
-                    </div>
-                </div>
+
             </div>
 
             <div class="row my-5">
@@ -96,10 +92,7 @@
                             <h4>Sub Total</h4>
                             <div class="ml-auto font-weight-bold"> ₴ {{ cart.get_total_price }} </div>
                         </div>
-                        <div class="d-flex">
-                            <h4>Discount</h4>
-                            <div class="ml-auto font-weight-bold"> $ 40 </div>
-                        </div>
+
                         {% if cart.coupon %}
                             <hr class="my-1">
                             <div class="d-flex">

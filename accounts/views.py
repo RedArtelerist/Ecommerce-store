@@ -50,6 +50,9 @@ def login_request(request):
 
 
 def logout_request(request):
+    if not request.user.has_usable_password():
+        messages.error(request, 'Set password to your account.')
+        return redirect('profile:change_password')
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect('accounts:login')

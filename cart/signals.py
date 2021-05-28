@@ -8,7 +8,10 @@ from .models import *
 
 
 @receiver(user_logged_in)
-def user_logged_in_handler(sender, request, user, **kwargs):
+def user_logged_in_handler(sender, user, request, **kwargs):
+    if not request.session.session_key:
+        request.session.save()
+
     UserSession.objects.get_or_create(user=user, session_id=request.session.session_key)
 
 

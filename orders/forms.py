@@ -1,5 +1,5 @@
 from django import forms
-from orders.models import Order
+from orders.models import Order, Delivery
 from orders.utils import queryset_cities
 
 

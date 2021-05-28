@@ -58,13 +58,13 @@
                                 </div>
                                 <div class="price-box-slider">
                                     <div id="slider-range"></div>
-                                    <p>
-                                        <div style="display: none">{{ filter.form.price }}</div>
-                                        <input type="text" id="amount" readonly style="border:0; color:#fbb714; font-weight:bold;">
+                                    <div style="display: none">{{ filter.form.price }}</div>
+                                    <div>
+                                        <input type="text" id="amount" readonly style="border:0; color:#fbb714; font-weight:bold; margin-top: 20px;">
                                         {% if min_price != max_price %}
-                                            <button class="btn hvr-hover" type="submit">Filter</button>
+                                            <button class="filter-btn btn hvr-hover" type="submit">Filter</button>
                                         {% endif %}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 
@@ -78,7 +78,7 @@
                                     <form name="sortForm" id="sort_form" method="get">
                                         <div class="toolbar-sorter-right">
                                             <span>Sort by </span>
-                                            {{ filter.form.status }}
+                                            {{ filter.form.order }}
                                         </div>
                                     </form>
                                     <p>Showing all {{ count }} results</p>

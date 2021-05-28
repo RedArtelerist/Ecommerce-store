@@ -1,9 +1,9 @@
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from cart.cart import Cart
 from cart.views import update_cart_in_all_user_sessions
 from orders.forms import OrderCreateForm
-from orders.models import OrderItem
+from orders.mail import orderMail
+from orders.models import OrderItem, Delivery
 from orders.utils import unique_order_id
 
 
@@ -16,8 +16,10 @@ def order_create(request):
             if len(cart) == 0:
                 return redirect('/')
 
-            #check payment method
             order = form.save(commit=False)
+            if order.paymentMethod == 'Card' or order.paymentMethod == 'PayPal':
+                order.paid = True
+
             order_id = unique_order_id()
             if request.user.is_authenticated:
                 order.user = request.user
@@ -34,6 +36,9 @@ def order_create(request):
                                          product=item['product'],
                                          price=item['price'],
                                          quantity=item['quantity'])
+
+            orderMail(request, order)
+
             cart.clear()
             request.session['coupon_id'] = None
 
@@ -46,4 +51,8 @@ def order_create(request):
     if len(cart) == 0:
         return redirect('cart:cart_detail')
 
-    return render(request, 'orders/checkout.html', {'form': form})
+    deliveries = Delivery.objects.order_by('price')
+
+    return render(request, 'orders/checkout.html', {'form': form, 'deliveries': deliveries})
+
+

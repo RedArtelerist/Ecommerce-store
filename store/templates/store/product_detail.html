@@ -159,7 +159,9 @@
                                     {% include "store/reviews.html" %}
                                 </div>
                                 <div id="comments" class="container tab-pane fade">
-                                    <button id="add_comment" class="highlight-button btn btn-lg button xs-margin-bottom-five"><i class="fa fa-comment"></i> Add comment</button>
+                                    <button id="add_comment" class="highlight-button btn btn-lg button xs-margin-bottom-five">
+                                        <i class="fa fa-comment"></i> Add comment
+                                    </button>
                                     <hr>
                                     <div id="commentModal" class="model-content">
                                         <div class="comments">
@@ -204,15 +206,6 @@
                                     <div class="panel-body">
                                         {% include "store/comments.html" %}
                                     </div>
-
-                                    <div>
-                                      <button class="btn waves-effect waves-light" id="lazy_more">
-                                          {% trans 'More comments' %}
-                                      </button>
-                                    </div>
-
-                                    <div><a id="lazyLoadLink" data-page="2">Load More Posts</a></div>
-
                                 </div>
                             </div>
                         </div>
@@ -226,6 +219,9 @@
 {% endblock %}
 
 {% block script %}
+    <script>
+        let login_url = `{% url 'accounts:login' %}`;
+    </script>
     <script src="{% static 'js/main/like_dislike.js' %}"></script>
     <script src="{% static 'js/main/comment_review.js' %}"></script>
 
@@ -247,57 +243,6 @@
             $("input#id_quantity").attr({
                "max" : 5,
                "min" : 1
-            });
-        });
-    </script>
-
-    <script>
-        var page = 1;
-        var empty_page = false;
-        var block_request = false;
-
-        $('#lazy_more').click(function (e) {
-            e.preventDefault();
-            if (empty_page === false && block_request === false) {
-                block_request = true;
-                page += 1;
-                //$('#preloader').show();
-                $.get('?page=' + page, function (data) {
-                    //$('#preloader').hide();
-                    if (data === '') {
-                        empty_page = true;
-                    } else {
-                        block_request = false;
-                        $('#comments .panel-body').append(data);
-                    }
-                });
-            }
-        });
-    </script>
-
-    <script>
-        $('#lazyLoadLink').on('click', function() {
-            var link = $(this);
-            var page = link.data('page');
-
-            $.ajax({
-                type: 'post',
-                url: '/lazy_load_posts/{{ product.id }}/',
-                data: {
-                    'page': page,
-                },
-                success: function(data) {
-                    if (data.has_next) {
-                        link.data('page', page+1);
-                    } else {
-                        link.hide();
-                    }
-                    // append html to the posts div
-                    $('#comments .panel-body').append(data.comments_html);
-                    },
-                error: function(error) {
-                    console.log(error);
-                }
             });
         });
     </script>

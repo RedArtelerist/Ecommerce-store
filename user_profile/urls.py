@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^account_settings', views.account_settings, name='account_settings'),
     url(r'^orders', views.orders, name='orders'),
     url(r'^order/(?P<order_id>[-\w]+)/$', views.order_detail, name='order_detail'),
+    url(r'^connections', views.connections, name='connections'),
     url(r'^cancel_order/(?P<order_id>[-\w]+)/$', views.cancel_order, name='cancel_order'),
     url(r'^delete_account', views.delete_account, name='delete_account'),
 
