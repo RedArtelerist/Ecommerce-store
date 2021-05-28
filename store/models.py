@@ -6,20 +6,15 @@ from django.db.models import Sum, Avg
 from django.urls import reverse
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
-
 from .validations import *
 from django.db import models
-
-
-def upload_path(instance, filename):
-    return '/static/images'.join([filename])
 
 
 class Category(MPTTModel):
     name = models.CharField('Name', max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.png')
+    image = models.ImageField(null=True, blank=True, upload_to='images', default='images/placeholder.png')
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -31,14 +26,6 @@ class Category(MPTTModel):
     def __str__(self):
         return self.name
 
-    """def __str__(self):
-        full_path = [self.name]
-        k = self.parent
-        while k is not None:
-            full_path.append(k.name)
-            k = k.parent
-        return ' / '.join(full_path[::-1])
-    """
     @property
     def imageURL(self):
         try:
@@ -56,7 +43,7 @@ class Company(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     country = models.CharField('Country', max_length=15)
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.png')
+    image = models.ImageField(null=True, blank=True, upload_to='images', default='images/placeholder.png')
 
     class Meta:
         ordering = ('name',)
@@ -92,7 +79,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name="Category", on_delete=models.CASCADE)
     company = models.ForeignKey(Company, verbose_name="Company", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.jpg')
+    image = models.ImageField(null=True, blank=True, upload_to='images/', default='images/placeholder.jpg')
 
     description = models.TextField('Description', max_length=3000, blank=True, null=True)
     shortSpecifications = models.TextField('Short specifications', max_length=500, null=True)
@@ -102,7 +89,6 @@ class Product(models.Model):
     discount = models.PositiveSmallIntegerField('Discount', default=0, null=True, validators=[validate_discount])
     year = models.PositiveSmallIntegerField('Year', default=datetime.datetime.now().year, validators=[validate_product_year])
 
-    #stock = models.PositiveIntegerField('Stock')
     sales = models.PositiveIntegerField('Sales', default=0)
     available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -117,7 +103,7 @@ class Product(models.Model):
         try:
             url = self.image.url
         except:
-            url = 'placeholder.jpg'
+            url = 'images/placeholder.jpg'
         return url
 
     class Meta:
