@@ -59,7 +59,7 @@ def password_reset_request(request):
                         'domain': current_site.domain,
                         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                         'token': default_token_generator.make_token(user),
-                        'protocol': 'https',
+                        'protocol': 'http',
                         'site_name': 'WayShop',
                     })
                     email = EmailMessage(
