@@ -12,8 +12,8 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True,
-                              upload_to='images/profiles',
-                              default='images/profiles/placeholder.png')
+                              upload_to='profiles',
+                              default='profiles/placeholder.png')
     middle_name = models.CharField(max_length=30, blank=True)
     gender = models.PositiveSmallIntegerField(choices=GENDER_CHOICES, null=True, default=1)
     birthdate = models.DateField(null=True, blank=True)

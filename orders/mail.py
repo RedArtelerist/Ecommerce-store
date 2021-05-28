@@ -17,7 +17,7 @@ def orderMail(request, order):
     html_content = render_to_string('orders/order_mail.html', {
         'order': order,
         'domain': current_site.domain,
-        'protocol': 'http',
+        'protocol': 'https',
     })
 
     text_content = strip_tags(html_content)
@@ -39,7 +39,7 @@ def logo_data(order, msg):
     n = 1
     for item in order.items.all():
         product = item.product
-        fp = open(finders.find(str(product.image)), 'rb')
+        fp = open(finders.find('images/' + str(product.image)), 'rb')
         msgImage = MIMEImage(fp.read())
         fp.close()
         msgImage.add_header('Content-ID', '<image' + str(n) + '>')
