@@ -88,7 +88,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name="Category", on_delete=models.CASCADE)
     company = models.ForeignKey(Company, verbose_name="Company", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
-    image = models.ImageField(null=True, blank=True, upload_to='images', default='images/placeholder.jpg')
+    image = models.ImageField(null=True, blank=True, upload_to='images', default='placeholder.jpg')
 
     description = models.TextField('Description', max_length=3000, blank=True, null=True)
     shortSpecifications = models.TextField('Short specifications', max_length=500, null=True)
