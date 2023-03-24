@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.forms import PasswordChangeForm, AdminPasswordChangeForm
 from django.contrib.auth.models import User
 from django.forms import RadioSelect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from orders.utils import queryset_cities
 from user_profile.models import Profile
@@ -14,7 +14,7 @@ class RadioSelectNotNull(RadioSelect):
     def get_renderer(self, name, value, attrs=None, choices=()):
         """Returns an instance of the renderer."""
         if value is None: value = ''
-        str_value = force_text(value) # Normalize to string.
+        str_value = force_str(value) # Normalize to string.
         final_attrs = self.build_attrs(attrs)
         choices = list(chain(self.choices, choices))
         if choices[0][0] == '':

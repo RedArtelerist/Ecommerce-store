@@ -29,7 +29,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td style="padding-bottom: 10px;">
-                                                        <a href="{{ protocol }}://{{ domain }}"><img src="cid:logo" alt="TheWayShop" /></a>
+                                                        <a href="{{ protocol }}://{{ domain }}"><img src="https://way-shop-bucket.s3.eu-north-1.amazonaws.com/images/icons/logo.png" alt="TheWayShop" /></a>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -102,7 +102,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <td rowspan="4" style="padding-right: 10px; padding-bottom: 10px;">
-                                                                <img style="height: 80px;" src="cid:image{{ forloop.counter }}" alt="Product Image" />
+                                                                <img style="height: 80px;" src="{{ product.imageURL }}" alt="Product Image" />
                                                             </td>
                                                             <td colspan="2" style="font-size: 14px; font-weight: bold; color: #666666; padding-bottom: 5px;">
                                                                 {{ product.name }}

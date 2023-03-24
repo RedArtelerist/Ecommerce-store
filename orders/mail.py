@@ -17,14 +17,14 @@ def orderMail(request, order):
     html_content = render_to_string('orders/order_mail.html', {
         'order': order,
         'domain': current_site.domain,
-        'protocol': 'https',
+        'protocol': 'http',
     })
 
     text_content = strip_tags(html_content)
 
     msg = EmailMultiAlternatives(mail_subject, text_content, settings.EMAIL_HOST_USER, [order.customer_email])
     msg.attach_alternative(html_content, "text/html")
-    logo_data(order, msg)
+    #logo_data(order, msg)
     msg.send(fail_silently=False)
 
 

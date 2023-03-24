@@ -2,6 +2,8 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.urls import reverse
+
 from coupons.models import Coupon
 from store.models import Product
 
@@ -32,14 +34,8 @@ class Order(models.Model):
     )
 
     PAYMENT = (
-        ('Cash', 'Cash'),
-        ('Card', 'Card'),
-        ('PayPal', 'PayPal'),
-    )
-
-    DELIVERY = (
-        ('Courier', 'Courier'),
-        ('Post office', 'Post office')
+        ('cash', 'Cash'),
+        ('card', 'Card')
     )
 
     order_id = models.CharField(max_length=15)
@@ -54,7 +50,7 @@ class Order(models.Model):
 
     status = models.CharField(max_length=40, choices=STATUS, default='New')
     delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, default=1)
-    paymentMethod = models.CharField(max_length=20, choices=PAYMENT, default='Cash')
+    paymentMethod = models.CharField(max_length=20, choices=PAYMENT, default='cash')
 
     recipient_first_name = models.CharField(max_length=20)
     recipient_last_name = models.CharField(max_length=30)
@@ -65,9 +61,11 @@ class Order(models.Model):
 
     paid = models.BooleanField(default=False)
 
-    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL,
-                               related_name='orders', null=True, blank=True)
+    coupon = models.ForeignKey(Coupon, on_delete=models.SET_NULL, related_name='orders', null=True, blank=True)
     discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+
+    telegram_id = models.IntegerField(default=-1)
+    available = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('-created',)
@@ -88,6 +86,9 @@ class Order(models.Model):
     def get_grand_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost - self.get_discount() + self.delivery.price
+
+    def get_absolute_url(self):
+        return reverse('orders:order_success', args=[self.order_id])
 
 
 class OrderItem(models.Model):

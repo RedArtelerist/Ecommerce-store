@@ -1,10 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from cart.cart import Cart
 from cart.views import update_cart_in_all_user_sessions
 from orders.forms import OrderCreateForm
 from orders.mail import orderMail
-from orders.models import OrderItem, Delivery
+from orders.models import OrderItem, Delivery, Order
 from orders.utils import unique_order_id
+
+
+def order_success(request, order_id):
+    order = get_object_or_404(Order, order_id=order_id)
+    return render(request, 'orders/created.html', {'order': order})
 
 
 def order_create(request):
@@ -32,12 +37,14 @@ def order_create(request):
             order.save()
 
             for item in cart:
-                OrderItem.objects.create(order=order,
-                                         product=item['product'],
-                                         price=item['price'],
-                                         quantity=item['quantity'])
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product'],
+                    price=item['price'],
+                    quantity=item['quantity']
+                )
 
-            orderMail(request, order)
+            #orderMail(request, order)
 
             cart.clear()
             request.session['coupon_id'] = None
@@ -45,9 +52,9 @@ def order_create(request):
             if request.user.is_authenticated:
                 update_cart_in_all_user_sessions(request)
 
-            return render(request, 'orders/created.html', {'order': order})
+            return redirect(order.get_absolute_url())
 
-    form = OrderCreateForm(use_required_attribute=False, initial={'city': 'Киев'})
+    form = OrderCreateForm(use_required_attribute=False, initial={'city': 'Kyiv'})
     if len(cart) == 0:
         return redirect('cart:cart_detail')
 

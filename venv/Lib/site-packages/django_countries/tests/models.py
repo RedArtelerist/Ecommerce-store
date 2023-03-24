@@ -1,4 +1,5 @@
 from django.db import models
+
 from django_countries.fields import CountryField
 from django_countries.tests import custom_countries
 
@@ -9,6 +10,7 @@ class Person(models.Model):
     other_country = CountryField(
         blank=True, countries_flag_url="//flags.example.com/{code}.gif"
     )
+    str_attr_country = CountryField(blank=True, countries_str_attr="name")
     favourite_country = CountryField(default="NZ")
     fantasy_country = CountryField(
         countries=custom_countries.FantasyCountries, blank=True
@@ -19,11 +21,16 @@ class Person(models.Model):
 
 
 class AllowNull(models.Model):
-    country = CountryField(null=True, blank_label="(select country)")
+    country = CountryField(null=True, blank=True, blank_label="(select country)")
 
 
 class MultiCountry(models.Model):
     countries = CountryField(multiple=True)
+    unsorted_countries = CountryField(multiple=True, multiple_sort=False, blank=True)
+    duplicate_countries = CountryField(multiple=True, multiple_unique=False, blank=True)
+    unsorted_duplicate_countries = CountryField(
+        multiple=True, multiple_sort=False, multiple_unique=False, blank=True
+    )
     uneditable_countries = CountryField(multiple=True, editable=False)
 
 

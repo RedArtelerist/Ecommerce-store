@@ -270,12 +270,14 @@
         $(function() {
             let minvalue = {{ min_price }};
             let maxvalue = {{ max_price }};
-            console.log(minvalue + " " + maxvalue);
+
             let left = $("#id_price_0").val();
             let right = $("#id_price_1").val();
-            if(left == "")
+            if(left === "")
                 left = minvalue;
-            if(right == "")
+            if(right === "")
+                left = $("#id_price_0").val();
+
                 right = maxvalue;
 
             console.log(left + " " + right);

@@ -14,7 +14,7 @@ class Category(MPTTModel):
     name = models.CharField('Name', max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    image = models.ImageField(null=True, blank=True, default='placeholder.png')
+    image = models.ImageField(null=True, blank=True, default='images/placeholder.png', upload_to='images/')
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -43,7 +43,7 @@ class Company(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
     country = models.CharField('Country', max_length=15)
-    image = models.ImageField(null=True, blank=True, default='placeholder.png')
+    image = models.ImageField(null=True, blank=True, default='images/placeholder.png', upload_to='images/')
 
     class Meta:
         ordering = ('name',)
@@ -79,7 +79,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, verbose_name="Category", on_delete=models.CASCADE)
     company = models.ForeignKey(Company, verbose_name="Company", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=200, db_index=True, unique=True)
-    image = models.ImageField(null=True, blank=True, default='placeholder.jpg')
+    image = models.ImageField(null=True, blank=True, default='images/placeholder.jpg', upload_to='images/')
 
     description = models.TextField('Description', max_length=3000, blank=True, null=True)
     shortSpecifications = models.TextField('Short specifications', max_length=500, null=True)
@@ -102,7 +102,6 @@ class Product(models.Model):
     def imageURL(self):
         try:
             url = self.image.url
-            print(url)
         except:
             url = 'images/placeholder.jpg'
         return url
@@ -137,7 +136,7 @@ class Product(models.Model):
 class ImageItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
-    image = models.ImageField(null=True, blank=True, default='placeholder.jpg')
+    image = models.ImageField(null=True, blank=True, default='images/placeholder.jpg', upload_to='images/')
 
     def __str__(self):
         return self.name

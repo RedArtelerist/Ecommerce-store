@@ -9,7 +9,7 @@ class CountryFilter(admin.FieldListFilter):
     related to the model.
     """
 
-    title = _("Country")
+    title = _("Country")  # type: ignore
 
     def expected_parameters(self):
         return [self.field.name]

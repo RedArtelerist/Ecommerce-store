@@ -22,26 +22,29 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
         # Add cumulative product count
         qs = Category.objects.add_related_count(
-                qs,
-                Product,
-                'category',
-                'products_cumulative_count',
-                cumulative=True)
+            qs,
+            Product,
+            'category',
+            'products_cumulative_count',
+            cumulative=True)
 
         # Add non cumulative product count
-        qs = Category.objects.add_related_count(qs,
-                 Product,
-                 'category',
-                 'products_count',
-                 cumulative=False)
+        qs = Category.objects.add_related_count(
+            qs,
+            Product,
+            'category',
+            'products_count',
+            cumulative=False)
         return qs
 
     def related_products_count(self, instance):
         return instance.products_count
+
     related_products_count.short_description = 'Related products (for this specific category)'
 
     def related_products_cumulative_count(self, instance):
         return instance.products_cumulative_count
+
     related_products_cumulative_count.short_description = 'Related products (in tree)'
 
 

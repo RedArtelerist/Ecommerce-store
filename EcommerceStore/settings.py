@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
+from dotenv import load_dotenv, find_dotenv
 
-
+load_dotenv(find_dotenv())
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -16,7 +17,7 @@ SECRET_KEY = 'tmq=gn!85tfbz1k^c4@q+0%i%9yu53$-7@!huk6(5c$paa((w3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ecommerce-wayshop.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
 
 
 # Application definition
@@ -28,6 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'storages',
 
     'crispy_forms',
     'ckeditor',
@@ -45,7 +48,10 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'user_profile.apps.UserProfileConfig',
     'coupons.apps.CouponsConfig',
+    'telegram_bot.apps.TelegramBotConfig',
 ]
+
+SITE_ID = 1
 
 #SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
@@ -146,13 +152,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/Kiev'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -167,7 +169,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+MEDIA_ROOT = os.path.join(BASE_DIR, '/images')
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
 
@@ -253,8 +255,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'redartelerist.host02@gmail.com'
-EMAIL_HOST_PASSWORD = 'xoaf34839dajad'
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -272,11 +274,11 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '482171365765-ep9fj7c3mb984h43cgtj99jhqtelghff.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'WwwMAuSzKMpQfxJjIheNCn_t'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
 
-SOCIAL_AUTH_FACEBOOK_KEY = '1254395534958144'
-SOCIAL_AUTH_FACEBOOK_SECRET = '7185d1ae004172ffb78065894cec2b21'
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ['SOCIAL_AUTH_FACEBOOK_KEY']
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'user_link']
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
@@ -288,8 +290,25 @@ SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
     ('link', 'profile_url'),
 ]
 
-SOCIAL_AUTH_TWITTER_KEY = 'ejqf1qNIu5275OcvefnnhulSl'
-SOCIAL_AUTH_TWITTER_SECRET = 'vsHp8juQlWjlUdwkw8BJEeS3vl6e0Vx02yxZLFeTZYA7A6msBm'
+SOCIAL_AUTH_TWITTER_KEY = os.environ['SOCIAL_AUTH_TWITTER_KEY']
+SOCIAL_AUTH_TWITTER_SECRET = os.environ['SOCIAL_AUTH_TWITTER_SECRET']
 
 if os.getcwd() == '/app':
     DEBUG = False
+
+# Telegram bot
+TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
+TELEGRAM_WEBHOOK_URL = f'{os.environ["TELEGRAM_WEBHOOK_URL"]}/telegram/'
+
+# S3
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+STRIPE_TOKEN = os.environ['STRIPE_TOKEN']

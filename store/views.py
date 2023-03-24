@@ -1,13 +1,12 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.template import loader
 from django.views import View
 from django.views.decorators.http import require_POST
+
 from cart.forms import CartAddProductForm
 from store.filter import ProductFilter, SearchProductFilter
 from store.forms import CommentForm, ReviewForm

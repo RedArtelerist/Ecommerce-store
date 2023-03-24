@@ -10,9 +10,9 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_id', 'customer_first_name', 'customer_last_name', 'customer_email',
-                    'status', 'city', 'address', 'paid', 'created', 'updated']
+                    'status', 'city', 'address', 'paid', 'created', 'updated', 'available']
     list_filter = ['paid', 'created', 'updated', 'status']
-    list_editable = ['paid', 'status']
+    list_editable = ['paid', 'status', 'available']
     readonly_fields = ('order_id', 'customer_email', 'customer_phone', 'user',
                        'recipient_email', 'created', 'updated')
     search_fields = ('order_id', 'customer_last_name')
@@ -21,7 +21,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            "fields": (('order_id', 'status', 'paid'), ('created', 'updated'),)
+            "fields": (('order_id', 'status', 'paid', 'available'), ('created', 'updated'),)
         }),
         ('Customer', {
             "fields": (('customer_first_name', 'customer_last_name', 'user'),

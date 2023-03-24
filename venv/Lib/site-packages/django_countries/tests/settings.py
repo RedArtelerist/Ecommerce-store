@@ -8,6 +8,7 @@ INSTALLED_APPS = (
 )
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3"}}
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 STATIC_URL = "/static-assets/"
 
@@ -34,3 +35,5 @@ TEMPLATES = [
         },
     }
 ]
+
+USE_TZ = True
