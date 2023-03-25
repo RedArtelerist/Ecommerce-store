@@ -17,7 +17,9 @@ SECRET_KEY = 'tmq=gn!85tfbz1k^c4@q+0%i%9yu53$-7@!huk6(5c$paa((w3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
+#ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
+ALLOWED_HOSTS = ['*']
+
 
 
 # Application definition
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'user_profile.apps.UserProfileConfig',
     'coupons.apps.CouponsConfig',
-    'telegram_bot.apps.TelegramBotConfig',
+    #'telegram_bot.apps.TelegramBotConfig',
 ]
 
 SITE_ID = 1

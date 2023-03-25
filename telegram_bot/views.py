@@ -1,12 +1,13 @@
 import json
 
-from django.http import HttpResponse
+import telegram
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
 from telegram_bot.buttons import *
 from telegram_bot.handlers.cart_handler import *
-from telegram_bot.handlers.delivery_handler import *
 from telegram_bot.handlers.checkout_handler import *
+from telegram_bot.handlers.delivery_handler import *
 from telegram_bot.handlers.order_handler import *
 from telegram_bot.handlers.payment_handler import *
 from telegram_bot.handlers.product_handler import *
@@ -116,11 +117,15 @@ def telegram_webhook(request):
         json_string = request.body.decode('utf-8')
         update = Update.de_json(json.loads(json_string), updater.bot)
         dispatcher.process_update(update)
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseBadRequest('Invalid request method')
 
-    return HttpResponse('OK')
 
-
+webhook_url = settings.TELEGRAM_WEBHOOK_URL
 bot_token = settings.TELEGRAM_BOT_TOKEN
+bot = telegram.Bot(token=bot_token)
+bot.setWebhook(webhook_url)
 updater = Updater(bot_token)
 dispatcher = updater.dispatcher
 
@@ -149,6 +154,7 @@ conv_handler = ConversationHandler(
     fallbacks=[
         CommandHandler('cancel', cancel_handler),
     ],
+    per_message=False
 )
 
 dispatcher.add_handler(CommandHandler('start', start_handler))

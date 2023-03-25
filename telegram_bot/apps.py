@@ -13,4 +13,3 @@ class TelegramBotConfig(AppConfig):
         bot = telegram.Bot(token=bot_token)
         bot.setWebhook(webhook_url)
 
-
