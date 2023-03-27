@@ -12,13 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'tmq=gn!85tfbz1k^c4@q+0%i%9yu53$-7@!huk6(5c$paa((w3'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-#ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
+#ALLOWED_HOSTS = ['*']
 
 
 
@@ -102,7 +102,6 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',
-
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -240,7 +239,6 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
-
 
 MESSAGE_TAGS = {
         messages.DEBUG: 'alert-secondary',

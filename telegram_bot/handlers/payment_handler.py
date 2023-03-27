@@ -11,7 +11,7 @@ from orders.models import Order, OrderItem, Delivery
 from orders.utils import unique_order_id
 from store.models import Product
 from telegram_bot.handlers.cart_handler import get_cart
-from telegram_bot.utils import build_menu, debug_requests, get_line_items, unique_code
+from telegram_bot.utils import build_menu, debug_requests, get_line_items, get_current_site
 
 PAYMENT, PAYMENT_CHECK = range(14, 16)
 stripe.api_key = settings.STRIPE_TOKEN
@@ -92,8 +92,8 @@ def payment_handler(update: Update, context: CallbackContext):
         context.user_data.clear()
         return ConversationHandler.END
     else:
-        #current_site = get_current_site(context.user_data['request'])
         current_time = int(time.time())
+        current_site = get_current_site()
         line_items = get_line_items(cart, context.user_data['delivery_price'])
 
         if context.user_data['discount'] != 0:
@@ -109,8 +109,8 @@ def payment_handler(update: Update, context: CallbackContext):
                 payment_method_types=["card"],
                 line_items=line_items,
                 mode="payment",
-                success_url=f"http://127.0.0.1:8000/",
-                cancel_url=f"http://127.0.0.1:8000/",
+                success_url=current_site,
+                cancel_url=current_site,
                 expires_at=current_time + 1800,
                 discounts=[{"coupon": coupon.id}],
                 billing_address_collection='auto'

@@ -3,6 +3,8 @@ import logging
 import random
 import string
 
+from django.conf import settings
+
 from cart.models import UserCart
 from store.models import Product
 
@@ -99,3 +101,11 @@ def get_line_items(cart: UserCart, delivery_price: int):
     )
 
     return line_items
+
+
+def get_current_site():
+    debug = settings.DEBUG
+    if debug:
+        return 'http://127.0.0.1:8000/'
+    else:
+        return 'https://ecommerce-wayshop.herokuapp.com/'
