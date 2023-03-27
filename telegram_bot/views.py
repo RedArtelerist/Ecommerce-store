@@ -153,8 +153,7 @@ conv_handler = ConversationHandler(
     },
     fallbacks=[
         CommandHandler('cancel', cancel_handler),
-    ],
-    per_message=False
+    ]
 )
 
 dispatcher.add_handler(CommandHandler('start', start_handler))
