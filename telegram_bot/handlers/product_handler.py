@@ -78,7 +78,7 @@ def product_detail_handler(update: Update, id: int, context: CallbackContext):
 
     button_list = [
         InlineKeyboardButton(text='Add to cart', callback_data=f'add_{product.id}'),
-        InlineKeyboardButton(text='View on site', url=f'http://127.0.0.1:8000/{product.id}/{product.slug}/'),
+        InlineKeyboardButton(text='View on site', url=f'{get_current_site}{product.id}/{product.slug}/'),
         InlineKeyboardButton(text='Back ⬅️', callback_data=f'back_subcategory:{product.category.id}')
     ]
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
