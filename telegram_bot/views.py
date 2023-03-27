@@ -110,22 +110,9 @@ def echo_handler(update: Update, context: CallbackContext):
         )
 
 
-@csrf_exempt
-@debug_requests
-def telegram_webhook(request):
-    if request.method == 'POST':
-        json_string = request.body.decode('utf-8')
-        update = Update.de_json(json.loads(json_string), updater.bot)
-        dispatcher.process_update(update)
-        return HttpResponse(status=200)
-    else:
-        return HttpResponseBadRequest('Invalid request method')
-
-
 webhook_url = settings.TELEGRAM_WEBHOOK_URL
 bot_token = settings.TELEGRAM_BOT_TOKEN
 bot = telegram.Bot(token=bot_token)
-bot.setWebhook(webhook_url)
 updater = Updater(bot_token)
 dispatcher = updater.dispatcher
 
@@ -163,3 +150,17 @@ dispatcher.add_handler(CommandHandler('orders', user_orders_list_handler))
 dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
+
+bot.setWebhook(webhook_url)
+
+
+@csrf_exempt
+@debug_requests
+def telegram_webhook(request):
+    if request.method == 'POST':
+        json_string = request.body.decode('utf-8')
+        update = Update.de_json(json.loads(json_string), updater.bot)
+        dispatcher.process_update(update)
+        return HttpResponse(status=200)
+    else:
+        return HttpResponseBadRequest('Invalid request method')
