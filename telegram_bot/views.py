@@ -151,7 +151,7 @@ dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
-bot.setWebhook(webhook_url)
+#bot.setWebhook(webhook_url)
 
 
 @csrf_exempt
