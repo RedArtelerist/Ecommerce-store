@@ -11,7 +11,7 @@ from orders.models import Order, OrderItem, Delivery
 from orders.utils import unique_order_id
 from store.models import Product
 from telegram_bot.handlers.cart_handler import get_cart
-from telegram_bot.utils import build_menu, debug_requests, get_line_items, get_current_site
+from telegram_bot.utils import build_menu, debug_requests, get_line_items, get_current_site, logger
 
 PAYMENT, PAYMENT_CHECK = range(14, 16)
 stripe.api_key = settings.STRIPE_TOKEN
@@ -21,6 +21,8 @@ stripe.api_key = settings.STRIPE_TOKEN
 def confirm_info_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     data = query.data.split('_')[1]
+    logger.info('Confirm: ' + data)
+
     if data == 'yes':
         buttons = [
             InlineKeyboardButton(text='Cash', callback_data='payment_cash'),
@@ -79,6 +81,7 @@ def create_order(cart: UserCart, context: CallbackContext, payment: str):
 def payment_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     data = query.data.split('_')[1]
+    logger.info('Payment: ' + data)
     cart = get_cart(query.message.chat_id)
     context.user_data['order_id'] = unique_order_id()
 
@@ -143,6 +146,7 @@ def payment_handler(update: Update, context: CallbackContext):
 @debug_requests
 def payment_check_handler(update: Update, context: CallbackContext):
     query = update.callback_query
+    logger.info('PAYMENT_CHECK: ' + query.data)
     cart = get_cart(query.message.chat_id)
     checkout_session_id = context.user_data["checkout_session_id"]
 

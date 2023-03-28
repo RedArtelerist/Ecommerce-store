@@ -15,6 +15,7 @@ C_FIRST_NAME, C_LAST_NAME, PHONE, C_EMAIL, RECIPIENT, R_FIRST_NAME, R_LAST_NAME,
 def start_order_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     init = update.callback_query.data
+    logger.info(init)
 
     if init != 'checkout_start':
         update.callback_query.bot.send_message(
@@ -32,6 +33,7 @@ def start_order_handler(update: Update, context: CallbackContext):
 @debug_requests
 def customer_first_name_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('C_FIRST_NAME: ' + update.message.text)
         first_name = validate_name(update.message.text, 'name')
         context.user_data['customer_first_name'] = first_name
         update.message.reply_text(text='❕*Enter your surname:*', parse_mode=ParseMode.MARKDOWN)
@@ -44,9 +46,9 @@ def customer_first_name_handler(update: Update, context: CallbackContext):
 @debug_requests
 def customer_last_name_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('C_LAST_NAME: ' + update.message.text)
         last_name = validate_name(update.message.text, 'surname')
         context.user_data['customer_last_name'] = last_name
-
         update.message.reply_text(text='❕*Enter your email:*', parse_mode=ParseMode.MARKDOWN)
         return C_EMAIL
     except Exception as ex:
@@ -57,6 +59,7 @@ def customer_last_name_handler(update: Update, context: CallbackContext):
 @debug_requests
 def customer_email_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('C_EMAIL: ' + update.message.text)
         email = validate_email(update.message.text)
         context.user_data['customer_email'] = email
 
@@ -73,6 +76,7 @@ def customer_email_handler(update: Update, context: CallbackContext):
 @debug_requests
 def customer_phone_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('PHONE: ' + update.message.text)
         phone = validate_phone(update.message.text)
         context.user_data['phone'] = phone
 
@@ -99,7 +103,7 @@ def customer_phone_handler(update: Update, context: CallbackContext):
 def recipient_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     data = query.data.split('_')[1]
-
+    logger.info('RECIPIENT: ' + data)
     if data == 'yes':
         context.user_data['recipient_first_name'] = context.user_data['customer_first_name']
         context.user_data['recipient_last_name'] = context.user_data['customer_last_name']
@@ -119,6 +123,7 @@ def recipient_handler(update: Update, context: CallbackContext):
 @debug_requests
 def recipient_first_name_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('R_FIRST_NAME: ' + update.message.text)
         first_name = validate_name(update.message.text, 'name')
         context.user_data['recipient_first_name'] = first_name
 
@@ -132,6 +137,7 @@ def recipient_first_name_handler(update: Update, context: CallbackContext):
 @debug_requests
 def recipient_last_name_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('R_LAST_NAME: ' + update.message.text)
         last_name = validate_name(update.message.text, 'surname')
         context.user_data['recipient_last_name'] = last_name
 
@@ -145,6 +151,7 @@ def recipient_last_name_handler(update: Update, context: CallbackContext):
 @debug_requests
 def recipient_email_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('R_EMAIL: ' + update.message.text)
         email = validate_email(update.message.text)
         context.user_data['recipient_email'] = email
 
@@ -162,6 +169,7 @@ def recipient_email_handler(update: Update, context: CallbackContext):
 @debug_requests
 def coupon_handler(update: Update, context: CallbackContext):
     text = update.message.text
+    logger.info('COUPON: ' + update.message.text)
     now = timezone.now()
     if text != 'skip':
         try:
@@ -185,6 +193,7 @@ def coupon_handler(update: Update, context: CallbackContext):
 
 @debug_requests
 def cancel_handler(update: Update, context: CallbackContext):
+    logger.info('Cancel: ' + update.message.text)
     update.message.reply_text('⚠️Your order was canceled')
     try:
         stripe.checkout.Session.expire(context.user_data["checkout_session_id"])

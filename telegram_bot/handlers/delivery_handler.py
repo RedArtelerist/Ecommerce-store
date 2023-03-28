@@ -8,7 +8,7 @@ from orders.models import Delivery
 from telegram_bot.buttons import cities_reply_markup, deliveries_reply_markup
 from telegram_bot.handlers.cart_handler import get_cart
 from telegram_bot.handlers.validators import validate_address
-from telegram_bot.utils import debug_requests, build_menu, order_info
+from telegram_bot.utils import debug_requests, build_menu, order_info, logger
 
 CITY, ADDRESS, DELIVERY, CONFIRM = range(10, 14)
 
@@ -17,6 +17,7 @@ CITY, ADDRESS, DELIVERY, CONFIRM = range(10, 14)
 def region_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     region = query.data
+    logger.info('Region: ' + region)
 
     query.edit_message_text(
         text='*Choose your city*',
@@ -31,6 +32,7 @@ def region_handler(update: Update, context: CallbackContext):
 def city_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     city = query.data
+    logger.info('CITY: ' + city)
 
     context.user_data['city'] = city
 
@@ -45,6 +47,7 @@ def city_handler(update: Update, context: CallbackContext):
 @debug_requests
 def address_handler(update: Update, context: CallbackContext):
     try:
+        logger.info('ADDRESS: ' + update.message.text)
         address = validate_address(update.message.text)
         context.user_data['address'] = address
 
@@ -64,6 +67,7 @@ def address_handler(update: Update, context: CallbackContext):
 def delivery_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     delivery_id = int(query.data.split('_')[1])
+    logger.info('DELIVERY: ' + str(delivery_id))
     context.user_data['delivery'] = int(delivery_id)
 
     cart = get_cart(query.message.chat_id)

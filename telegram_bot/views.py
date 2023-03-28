@@ -161,7 +161,6 @@ def telegram_webhook(request):
         json_string = request.body.decode('utf-8')
         update = Update.de_json(json.loads(json_string), updater.bot)
         dispatcher.process_update(update)
-        logger.info(json_string)
         return HttpResponse(status=200)
     else:
         return HttpResponseBadRequest('Invalid request method')
