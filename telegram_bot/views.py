@@ -118,7 +118,8 @@ dispatcher = updater.dispatcher
 
 conv_handler = ConversationHandler(
     entry_points=[
-        CallbackQueryHandler(start_order_handler, pattern='checkout_start'),
+        #CallbackQueryHandler(start_order_handler, pattern='checkout_start'),
+        CommandHandler('checkout', start_order_handler)
     ],
     states={
         C_FIRST_NAME: [MessageHandler(Filters.text & ~Filters.command, customer_first_name_handler)],
@@ -151,7 +152,7 @@ dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
-#bot.setWebhook(webhook_url)
+bot.setWebhook(webhook_url)
 
 
 @csrf_exempt

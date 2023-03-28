@@ -312,3 +312,5 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
 STRIPE_TOKEN = os.environ['STRIPE_TOKEN']
+
+#https://api.telegram.org/bot6292173172:AAHfbfcvbqUwqmKxwLCwADeIxmrlgHQT6JU/setWebhook?url=https://ecommerce-wayshop.herokuapp.com/telegram
