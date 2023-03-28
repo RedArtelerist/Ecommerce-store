@@ -13,7 +13,7 @@ C_FIRST_NAME, C_LAST_NAME, PHONE, C_EMAIL, RECIPIENT, R_FIRST_NAME, R_LAST_NAME,
 
 @debug_requests
 def start_order_handler(update: Update, context: CallbackContext):
-    """query = update.callback_query
+    query = update.callback_query
     init = update.callback_query.data
 
     if init != 'checkout_start':
@@ -22,8 +22,7 @@ def start_order_handler(update: Update, context: CallbackContext):
             text='Something went wrong',
         )
         return ConversationHandler.END
-    """
-    update.message.reply_text(
+    query.edit_message_text(
         text='Please provide some information to place an order. If you want to cancel your order write /cancel.\n\n❕*Now enter your name:*',
         parse_mode=ParseMode.MARKDOWN
     )
