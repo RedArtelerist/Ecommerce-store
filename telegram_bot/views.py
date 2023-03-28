@@ -142,7 +142,6 @@ conv_handler = ConversationHandler(
         CommandHandler('cancel', cancel_handler),
     ],
     conversation_timeout=0,
-    per_message=True
 )
 
 dispatcher.add_handler(CommandHandler('start', start_handler))
