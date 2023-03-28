@@ -20,7 +20,7 @@ def region_handler(update: Update, context: CallbackContext):
     logger.info('Region: ' + region)
 
     query.edit_message_text(
-        text='*Choose your city*',
+        text='❕*Choose your city*',
         reply_markup=cities_reply_markup(region),
         parse_mode=ParseMode.MARKDOWN
     )

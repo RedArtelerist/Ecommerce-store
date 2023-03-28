@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from telegram import *
 from telegram.ext import CallbackContext
 
 from orders.models import Order

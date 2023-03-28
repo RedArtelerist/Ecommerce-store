@@ -137,7 +137,7 @@ def payment_handler(update: Update, context: CallbackContext):
             InlineKeyboardButton(text="🛍️ Go to checkout", url=checkout_url),
             InlineKeyboardButton(text="Confirm", callback_data='confirm_order'),
         ]
-        reply_markup = InlineKeyboardMarkup(build_menu(payment_keyboard, 1), resize_keyboard=True, one_time_keyboard=True)
+        reply_markup = InlineKeyboardMarkup(build_menu(payment_keyboard, 1))
         query.edit_message_text(payment_message, reply_markup=reply_markup, parse_mode=ParseMode.MARKDOWN)
 
         return PAYMENT_CHECK

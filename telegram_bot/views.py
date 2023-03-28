@@ -1,6 +1,5 @@
 import json
 
-import telegram
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
@@ -112,8 +111,8 @@ def echo_handler(update: Update, context: CallbackContext):
 
 webhook_url = settings.TELEGRAM_WEBHOOK_URL
 bot_token = settings.TELEGRAM_BOT_TOKEN
-bot = telegram.Bot(token=bot_token)
-updater = Updater(bot_token)
+bot = Bot(token=bot_token)
+updater = Updater(bot_token, use_context=True)
 dispatcher = updater.dispatcher
 
 conv_handler = ConversationHandler(
