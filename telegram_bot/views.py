@@ -114,7 +114,7 @@ def echo_handler(update: Update, context: CallbackContext):
 webhook_url = settings.TELEGRAM_WEBHOOK_URL
 bot_token = settings.TELEGRAM_BOT_TOKEN
 bot = Bot(token=bot_token)
-updater = Updater(token=bot_token)
+updater = Updater(token=bot_token, workers=0)
 dispatcher = updater.dispatcher
 
 conv_handler = ConversationHandler(
