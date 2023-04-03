@@ -1,4 +1,6 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict
 
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -112,7 +114,7 @@ def echo_handler(update: Update, context: CallbackContext):
 webhook_url = settings.TELEGRAM_WEBHOOK_URL
 bot_token = settings.TELEGRAM_BOT_TOKEN
 bot = Bot(token=bot_token)
-updater = Updater(bot_token, use_context=True)
+updater = Updater(token=bot_token)
 dispatcher = updater.dispatcher
 
 conv_handler = ConversationHandler(
@@ -152,15 +154,22 @@ dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
 bot.setWebhook(webhook_url)
+executor = ThreadPoolExecutor()
 
+def process_update(update: Dict[str, str], context: CallbackContext) -> None:
+    update = Update.de_json(update, bot)
+    dispatcher.process_update(update)
 
 @csrf_exempt
 @debug_requests
 def telegram_webhook(request):
     if request.method == 'POST':
-        json_string = request.body.decode('utf-8')
-        update = Update.de_json(json.loads(json_string), updater.bot)
-        dispatcher.process_update(update)
-        return HttpResponse(status=200)
+        try:
+            update = json.loads(request.body.decode('utf-8'))
+            executor.submit(process_update, update, None)
+            return HttpResponse(status=200)
+        except Exception as e:
+            logger.error(str(e))
+            return HttpResponseBadRequest('Invalid request body')
     else:
         return HttpResponseBadRequest('Invalid request method')
