@@ -314,3 +314,6 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 STRIPE_TOKEN = os.environ['STRIPE_TOKEN']
 
 #https://api.telegram.org/bot6292173172:AAHfbfcvbqUwqmKxwLCwADeIxmrlgHQT6JU/setWebhook?url=https://363d-87-244-163-44.ngrok.io/telegram/
+
+
+#https://api.telegram.org/bot5994912184:AAGvDuOnRjYwS_GSMg55FvU11m7oHL7IWEU/setWebhook?url=https://redartis.pythonanywhere.com/telegram/
