@@ -152,15 +152,7 @@ dispatcher.add_handler(CommandHandler('orders', user_orders_list_handler))
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
-#bot.setWebhook(webhook_url)
-
-PORT = int(os.environ.get('PORT', 8000))
-updater.start_webhook(
-    listen='0.0.0.0',
-    port=PORT,
-    url_path=BOT_TOKEN,
-    webhook_url=f'{WEBHOOK_URL}'
-)
+bot.setWebhook(WEBHOOK_URL)
 
 @csrf_exempt
 @debug_requests
