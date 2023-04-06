@@ -1,4 +1,6 @@
 import json
+import os
+
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 
@@ -108,10 +110,10 @@ def echo_handler(update: Update, context: CallbackContext):
         )
 
 
-webhook_url = settings.TELEGRAM_WEBHOOK_URL
-bot_token = settings.TELEGRAM_BOT_TOKEN
-bot = Bot(token=bot_token)
-updater = Updater(token=bot_token)
+WEBHOOK_URL = settings.TELEGRAM_WEBHOOK_URL
+BOT_TOKEN = settings.TELEGRAM_BOT_TOKEN
+bot = Bot(token=BOT_TOKEN)
+updater = Updater(token=BOT_TOKEN, use_context=True)
 dispatcher = updater.dispatcher
 
 conv_handler = ConversationHandler(
@@ -142,15 +144,23 @@ conv_handler = ConversationHandler(
     conversation_timeout=0,
 )
 
+dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('categories', categories_handler))
 dispatcher.add_handler(CommandHandler('cart', get_cart_handler))
 dispatcher.add_handler(CommandHandler('orders', user_orders_list_handler))
-dispatcher.add_handler(conv_handler)
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
-bot.setWebhook(webhook_url)
+#bot.setWebhook(webhook_url)
+
+PORT = int(os.environ.get('PORT', 5000))
+updater.start_webhook(
+    listen='0.0.0.0',
+    port=PORT,
+    url_path=BOT_TOKEN,
+    webhook_url=f'{WEBHOOK_URL}'
+)
 
 @csrf_exempt
 @debug_requests
