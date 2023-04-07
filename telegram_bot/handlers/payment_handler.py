@@ -123,8 +123,8 @@ def payment_handler(update: Update, context: CallbackContext):
                 payment_method_types=["card"],
                 line_items=line_items,
                 mode="payment",
-                success_url=f"http://127.0.0.1:8000/",
-                cancel_url=f"http://127.0.0.1:8000/",
+                success_url=current_site,
+                cancel_url=current_site,
                 expires_at=current_time + 1800
             )
 

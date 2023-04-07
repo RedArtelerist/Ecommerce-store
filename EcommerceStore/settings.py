@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ['DEBUG']
 
 #ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com']
 ALLOWED_HOSTS = ['*']
@@ -273,10 +273,11 @@ SOCIAL_AUTH_PIPELINE = (
     'user_profile.pipeline.user_details'
 )
 
-
+# Google auth config
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
 
+# Facebook auth config
 SOCIAL_AUTH_FACEBOOK_KEY = os.environ['SOCIAL_AUTH_FACEBOOK_KEY']
 SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['SOCIAL_AUTH_FACEBOOK_SECRET']
 
@@ -290,15 +291,14 @@ SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
     ('link', 'profile_url'),
 ]
 
+# Twitter auth config
 SOCIAL_AUTH_TWITTER_KEY = os.environ['SOCIAL_AUTH_TWITTER_KEY']
 SOCIAL_AUTH_TWITTER_SECRET = os.environ['SOCIAL_AUTH_TWITTER_SECRET']
 
-if os.getcwd() == '/app':
-    DEBUG = False
 
 # Telegram bot
 TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
-TELEGRAM_WEBHOOK_URL = f'{os.environ["TELEGRAM_WEBHOOK_URL"]}/telegram/'
+TELEGRAM_WEBHOOK_URL = os.environ["TELEGRAM_WEBHOOK_URL"]
 
 # S3
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']

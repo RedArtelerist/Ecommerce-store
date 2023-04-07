@@ -108,4 +108,4 @@ def get_current_site():
     if debug:
         return 'http://127.0.0.1:8000/'
     else:
-        return 'https://ecommerce-wayshop.herokuapp.com/'
+        return f'{settings.TELEGRAM_WEBHOOK_URL}/'

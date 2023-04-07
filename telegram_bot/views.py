@@ -110,7 +110,7 @@ def echo_handler(update: Update, context: CallbackContext):
         )
 
 
-WEBHOOK_URL = settings.TELEGRAM_WEBHOOK_URL
+WEBHOOK_URL = f'{settings.TELEGRAM_WEBHOOK_URL}/telegram/'
 BOT_TOKEN = settings.TELEGRAM_BOT_TOKEN
 bot = Bot(token=BOT_TOKEN)
 updater = Updater(token=BOT_TOKEN, use_context=True)
