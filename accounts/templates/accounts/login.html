@@ -39,9 +39,9 @@
             <p class="text-center">Don't have an account?<a href='{% url 'accounts:register' %}'>Create an account</a>.</p>
 
             <div id="btn" class="text-center">
-                <a href="{% url 'accounts:social:begin' 'facebook' %}" class="btn btn-primary btn-circle btn-sm"><i class="fab fa-facebook-f"></i></a>
-                <a href="{% url 'accounts:social:begin' 'google-oauth2' %}" class="btn btn-danger btn-circle btn-sm"><i class="fab fa-google"></i></a>
-                <a href="{% url 'accounts:social:begin' 'twitter' %}" class="btn btn-info btn-circle btn-sm"><i class="fab fa-twitter"></i></a>
+                <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-primary btn-circle btn-sm"><i class="fab fa-facebook-f"></i></a>
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger btn-circle btn-sm"><i class="fab fa-google"></i></a>
+                <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-info btn-circle btn-sm"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
     </div>

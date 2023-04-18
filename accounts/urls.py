@@ -7,7 +7,5 @@ urlpatterns = [
     re_path(r'^login/', views.login_request, name='login'),
     re_path(r'^logout/', views.logout_request, name='logout'),
     path('password_reset/', utils.password_reset_request, name='password_reset'),
-    path('reset/<uidb64>/<token>', utils.password_reset_confirm, name='password_reset_confirm'),
-    re_path(r'^oauth/', include('social_django.urls', namespace='social')),
-
+    path('reset/<uidb64>/<token>', utils.password_reset_confirm, name='password_reset_confirm')
 ]

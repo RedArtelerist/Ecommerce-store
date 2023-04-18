@@ -14,6 +14,7 @@ urlpatterns = [
     re_path(r'^order/', include(('orders.urls', 'orders'), namespace='orders')),
     re_path(r'^profile/', include(('user_profile.urls', 'profile'), namespace='profile')),
     re_path(r'^coupons/', include(('coupons.urls', 'coupons'), namespace='coupons')),
+    path('oauth/', include('social_django.urls', namespace='social')),
     path('telegram/', include('telegram_bot.urls')),
 ]
 

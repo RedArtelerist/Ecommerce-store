@@ -99,7 +99,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_URL_NAMESPACE = 'accounts:social'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
 
 LOGIN_URL = 'accounts:login'
 LOGOUT_URL = 'accounts:logout'
