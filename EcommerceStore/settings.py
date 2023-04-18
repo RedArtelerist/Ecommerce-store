@@ -18,12 +18,10 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com', 'wayshop.up.railway.app']
-#ALLOWED_HOSTS = ['*']
 
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'storages',
 
     'crispy_forms',
@@ -50,10 +47,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'user_profile.apps.UserProfileConfig',
     'coupons.apps.CouponsConfig',
-    #'telegram_bot.apps.TelegramBotConfig',
 ]
-
-SITE_ID = 1
 
 #SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
@@ -296,11 +290,11 @@ SOCIAL_AUTH_TWITTER_KEY = os.environ['SOCIAL_AUTH_TWITTER_KEY']
 SOCIAL_AUTH_TWITTER_SECRET = os.environ['SOCIAL_AUTH_TWITTER_SECRET']
 
 
-# Telegram bot
+# Telegram bot config
 TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 TELEGRAM_WEBHOOK_URL = os.environ["TELEGRAM_WEBHOOK_URL"]
 
-# S3
+# S3 config
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
@@ -311,6 +305,5 @@ AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
+# Stripe config
 STRIPE_TOKEN = os.environ['STRIPE_TOKEN']
-
-#https://api.telegram.org/bot6292173172:AAHfbfcvbqUwqmKxwLCwADeIxmrlgHQT6JU/setWebhook?url=https://363d-87-244-163-44.ngrok.io/telegram/

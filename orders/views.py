@@ -44,7 +44,7 @@ def order_create(request):
                     quantity=item['quantity']
                 )
 
-            #orderMail(request, order)
+            orderMail(request, order)
 
             cart.clear()
             request.session['coupon_id'] = None

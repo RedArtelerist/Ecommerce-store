@@ -18,7 +18,7 @@ def send_to_email(request, user, to_email):
     message = render_to_string('accounts/activation_request.html', {
         'user': user,
         'domain': current_site.domain,
-        'protocol': 'http',
+        'protocol': 'https',
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': default_token_generator.make_token(user),
     })
