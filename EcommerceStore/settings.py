@@ -18,7 +18,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'ecommerce-wayshop.herokuapp.com', 'wayshop.up.railway.app']
-
+CSRF_TRUSTED_ORIGINS = ['https://wayshop.up.railway.app','https://*.127.0.0.1', 'https://ecommerce-wayshop.herokuapp.com']
 
 
 # Application definition
