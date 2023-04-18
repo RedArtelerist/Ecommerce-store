@@ -17,9 +17,10 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'wayshop.herokuapp.com', 'wayshop.up.railway.app']
-CSRF_TRUSTED_ORIGINS = ['https://wayshop.up.railway.app','https://*.127.0.0.1', 'https://wayshop.herokuapp.com']
-
+#ALLOWED_HOSTS = ['127.0.0.1', 'wayshop.herokuapp.com', 'wayshop.up.railway.app']
+#CSRF_TRUSTED_ORIGINS = ['https://wayshop.up.railway.app','https://*.127.0.0.1', 'https://wayshop.herokuapp.com']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
