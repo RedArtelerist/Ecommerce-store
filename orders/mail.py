@@ -8,11 +8,11 @@ from telegram_bot.utils import current_site, logger
 
 
 def orderMail(request, order):
-    curr_site = get_current_site(request)
     if request is None:
         domain = current_site().split('://')[1]
         logger.info(domain)
     else:
+        curr_site = get_current_site(request)
         domain = curr_site.domain
     mail_subject = 'Order Confirmation.'
     logger.info('Ok')
