@@ -160,7 +160,6 @@ def payment_check_handler(update: Update, context: CallbackContext):
             order.paid = True
             order.save()
 
-            logger.info('Send mail')
             orderMail(None, order)
 
             query.edit_message_text(text="✅ Payment successful! Thank you for your purchase. We sent you an email with the details of your order")
