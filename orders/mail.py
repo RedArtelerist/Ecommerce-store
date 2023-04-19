@@ -4,16 +4,18 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 from EcommerceStore import settings
-from telegram_bot.utils import current_site
+from telegram_bot.utils import current_site, logger
 
 
 def orderMail(request, order):
     curr_site = get_current_site(request)
     if request is None:
         domain = current_site().split('://')[1]
+        logger.info(domain)
     else:
         domain = curr_site.domain
     mail_subject = 'Order Confirmation.'
+    logger.info('Ok')
 
     html_content = render_to_string('orders/order_mail.html', {
         'order': order,

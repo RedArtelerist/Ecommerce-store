@@ -45,7 +45,6 @@ def order_create(request):
                     quantity=item['quantity']
                 )
 
-            logger.info('Send mail')
             orderMail(request, order)
 
             cart.clear()
