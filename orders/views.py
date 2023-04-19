@@ -5,6 +5,7 @@ from orders.forms import OrderCreateForm
 from orders.mail import orderMail
 from orders.models import OrderItem, Delivery, Order
 from orders.utils import unique_order_id
+from telegram_bot.utils import logger
 
 
 def order_success(request, order_id):
@@ -44,6 +45,7 @@ def order_create(request):
                     quantity=item['quantity']
                 )
 
+            logger.info('Send mail')
             orderMail(request, order)
 
             cart.clear()
