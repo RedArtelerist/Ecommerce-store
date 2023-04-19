@@ -7,11 +7,12 @@ from telegram.ext import CallbackContext, ConversationHandler
 
 from cart.models import UserCart
 from coupons.models import Coupon
+from orders.mail import orderMail
 from orders.models import Order, OrderItem, Delivery
 from orders.utils import unique_order_id
 from store.models import Product
 from telegram_bot.handlers.cart_handler import get_cart
-from telegram_bot.utils import build_menu, debug_requests, get_line_items, get_current_site, logger
+from telegram_bot.utils import build_menu, debug_requests, get_line_items, current_site, logger
 
 PAYMENT, PAYMENT_CHECK = range(14, 16)
 stripe.api_key = settings.STRIPE_TOKEN
@@ -96,7 +97,6 @@ def payment_handler(update: Update, context: CallbackContext):
         return ConversationHandler.END
     else:
         current_time = int(time.time())
-        current_site = get_current_site()
         line_items = get_line_items(cart, context.user_data['delivery_price'])
 
         if context.user_data['discount'] != 0:
@@ -112,8 +112,8 @@ def payment_handler(update: Update, context: CallbackContext):
                 payment_method_types=["card"],
                 line_items=line_items,
                 mode="payment",
-                success_url=current_site,
-                cancel_url=current_site,
+                success_url=current_site(),
+                cancel_url=current_site(),
                 expires_at=current_time + 1800,
                 discounts=[{"coupon": coupon.id}],
                 billing_address_collection='auto'
@@ -125,7 +125,8 @@ def payment_handler(update: Update, context: CallbackContext):
                 mode="payment",
                 success_url=current_site,
                 cancel_url=current_site,
-                expires_at=current_time + 1800
+                expires_at=current_time + 1800,
+                billing_address_collection='auto'
             )
 
         context.user_data["checkout_session_id"] = session.id
@@ -158,8 +159,9 @@ def payment_check_handler(update: Update, context: CallbackContext):
             order = create_order(cart, context, 'card')
             order.paid = True
             order.save()
+            orderMail(None, order)
 
-            query.edit_message_text(text="✅ Payment successful! Thank you for your purchase.")
+            query.edit_message_text(text="✅ Payment successful! Thank you for your purchase. We sent you an email with the details of your order")
         except:
             query.edit_message_text(text="⚠️Something went wrong. Try again later")
     else:

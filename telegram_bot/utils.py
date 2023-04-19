@@ -103,7 +103,7 @@ def get_line_items(cart: UserCart, delivery_price: int):
     return line_items
 
 
-def get_current_site():
+def current_site():
     debug = settings.DEBUG
     if debug:
         return 'http://127.0.0.1:8000/'
