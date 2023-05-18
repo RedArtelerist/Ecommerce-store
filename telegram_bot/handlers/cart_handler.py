@@ -15,7 +15,6 @@ def get_cart(chat_id):
 
     return cart
 
-
 def show_cart(update: Update, context: CallbackContext, chat_id, message_id, edit: bool):
     cart = get_cart(chat_id)
     cart_text, total = order_info(cart)
@@ -47,7 +46,6 @@ def show_cart(update: Update, context: CallbackContext, chat_id, message_id, edi
             cart.message_id = message_id + 1
             cart.save()
 
-
 def add_to_cart(update: Update, prod_id, context: CallbackContext):
     query = update.callback_query
     chat_id = query.message.chat_id
@@ -75,7 +73,6 @@ def add_to_cart(update: Update, prod_id, context: CallbackContext):
     except Exception:
         query.answer('Product not found')
 
-
 def remove_from_cart(update: Update, prod_id, context: CallbackContext, full=False):
     query = update.callback_query
     chat_id = query.message.chat_id
@@ -94,18 +91,6 @@ def remove_from_cart(update: Update, prod_id, context: CallbackContext, full=Fal
     except Exception:
         query.answer('Something went wrong')
 
-
-def clear_cart(update: Update, context: CallbackContext):
-    query = update.callback_query
-    chat_id = query.message.chat_id
-
-    cart = get_cart(chat_id)
-
-    cart.items_cart = []
-    cart.save()
-    query.delete_message()
-
-
 @debug_requests
 def get_cart_handler(update: Update, context: CallbackContext, edit=False):
     if edit:
@@ -118,11 +103,17 @@ def get_cart_handler(update: Update, context: CallbackContext, edit=False):
 
     show_cart(update, context, chat_id, message_id, edit)
 
-
 @debug_requests
 def clear_cart_handler(update: Update, context: CallbackContext):
-    clear_cart(update, context)
+    query = update.callback_query
+    chat_id = query.message.chat_id
+    cart = get_cart(chat_id)
 
+    try:
+        cart.items_cart = []
+        cart.save()
+        query.delete_message()
+    except: pass
 
 @debug_requests
 def close_cart_handler(update: Update, context: CallbackContext):
@@ -132,7 +123,6 @@ def close_cart_handler(update: Update, context: CallbackContext):
     try:
         context.bot.delete_message(chat_id=chat_id, message_id=cart.message_id)
     except: pass
-
 
 @debug_requests
 def edit_cart_handler(update: Update, context: CallbackContext):

@@ -53,7 +53,7 @@ def products_handler(update: Update, id: int, context: CallbackContext, status=T
     for item in products:
         button_list.append(InlineKeyboardButton(text=item.name, callback_data=f"product_{item.id}"))
 
-    button_list.append(InlineKeyboardButton(text='Back ⬅️', callback_data=f'back_category:{category.parent.id}'))
+    button_list.append(InlineKeyboardButton(text='Back ⬅️', callback_data=f'category_{category.parent.id}'))
 
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
     if status:
@@ -89,22 +89,36 @@ def product_detail_handler(update: Update, id: int, context: CallbackContext):
 
 
 @debug_requests
-def product_review_handler(update: Update, id: int, context: CallbackContext):
+def product_reviews_handler(update: Update, id: int, context: CallbackContext):
     query = update.callback_query
-    reviews = Product.objects.get(pk=id).review_set()
-    text = []
+    product = Product.objects.get(pk=id)
+    reviews = Review.objects.filter(product=product, status='True').order_by('-created')
+
+    button_list = []
     for review in reviews:
-        text.append(get_review_text(review))
-    button_list = [
-        InlineKeyboardButton(text='Back ⬅️', callback_data=f'back_product:{id}')
-    ]
+        text = f'{review.user.username}, {review.created.strftime("%Y-%m-%d %H:%M")}, {review.rate}/5'
+        button_list.append(InlineKeyboardButton(text=text, callback_data=f"review_{review.id}"))
+    button_list.append(InlineKeyboardButton(text='Back ⬅️', callback_data=f'product_{id}'))
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
+
     query.delete_message()
-    query.message.reply_text('\n'.join(text), reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+    if len(reviews) == 0:
+        query.message.reply_text(text='<b>This product has no reviews</b>', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+    else:
+        query.message.reply_text(text=f'Reviews for <b>{product.name}</b>:', reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
 
-def get_review_text(review: Review):
+def review_handler(update: Update, id: int, context: CallbackContext):
+    query = update.callback_query
+    review = Review.objects.get(pk=id)
+
     rate = review.rate
-    text = f'<b>{review.user.username}</b>|<i>{review.updated}</i>|{"⭐️" * rate}{"❌" * (5-rate)}\n'
-    text += f'{review.body}\n\n<b>Advantages: </b>{review.advantages}\n<b>Disadvantages: </b>{review.disadvantages}'
-    return text
+    text = f'<b>{review.user.username}</b>|<i>{review.created.strftime("%Y-%m-%d %H:%M")}</i>\n{"⭐️" * rate}{"❌" * (5-rate)}\n'
+    text += f'{review.body}\n\n<b>Advantages: </b>{review.advantages}\n<b>Disadvantages: </b>{review.disadvantages}\n'
+    text += f'👍({review.votes.likes().count()}) 👎({review.votes.dislikes().count()})\n'
+
+    button_list = [
+        InlineKeyboardButton(text='Back ⬅️', callback_data=f'reviews_{review.product.id}')
+    ]
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+    query.edit_message_text(text=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)

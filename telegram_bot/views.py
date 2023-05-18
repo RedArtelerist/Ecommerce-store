@@ -42,7 +42,9 @@ def button_callback_handler(update: Update, context: CallbackContext):
     if action == 'product':
         product_detail_handler(update, int(val), context)
     if action == 'reviews':
-        product_review_handler(update, int(val), context)
+        product_reviews_handler(update, int(val), context)
+    if action == 'review':
+        review_handler(update, int(val), context)
     if action == 'add':
         add_to_cart(update, int(val), context)
         close_cart_handler(update, context)
@@ -70,15 +72,9 @@ def button_callback_handler(update: Update, context: CallbackContext):
     if action == 'back':
         if val == 'menu':
             query.edit_message_text('All categories:', reply_markup=get_categories_buttons())
-        if val.startswith('category'):
-            id = int(val.split(':')[1])
-            subcategories_handler(update, id, context)
         if val.startswith('subcategory'):
             id = int(val.split(':')[1])
             products_handler(update, id, context, False)
-        if val.startswith('product'):
-            id = int(val.split(':')[1])
-            product_detail_handler(update, id, context)
         if val == 'cart':
             get_cart_handler(update, context, True)
         if val == 'orders':
