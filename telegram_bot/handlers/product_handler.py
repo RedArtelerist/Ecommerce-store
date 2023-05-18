@@ -1,7 +1,7 @@
 from telegram import *
 from telegram.ext import *
 
-from store.models import Category, Product
+from store.models import Category, Product, Review
 from telegram_bot.utils import *
 
 
@@ -79,9 +79,32 @@ def product_detail_handler(update: Update, id: int, context: CallbackContext):
     button_list = [
         InlineKeyboardButton(text='Add to cart', callback_data=f'add_{product.id}'),
         InlineKeyboardButton(text='View on site', url=f'{current_site()}{product.id}/{product.slug}/'),
+        InlineKeyboardButton(text='Reviews', callback_data=f'reviews_{product.id}'),
         InlineKeyboardButton(text='Back ⬅️', callback_data=f'back_subcategory:{product.category.id}')
     ]
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
 
     query.delete_message()
     query.message.reply_photo(photo=photo_url, caption=caption, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+
+
+@debug_requests
+def product_review_handler(update: Update, id: int, context: CallbackContext):
+    query = update.callback_query
+    reviews = Product.objects.get(pk=id).review_set()
+    text = []
+    for review in reviews:
+        text.append(get_review_text(review))
+    button_list = [
+        InlineKeyboardButton(text='Back ⬅️', callback_data=f'back_product:{id}')
+    ]
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=1))
+    query.delete_message()
+    query.message.reply_text('\n'.join(text), reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+
+
+def get_review_text(review: Review):
+    rate = review.rate
+    text = f'<b>{review.user.username}</b>|<i>{review.updated}</i>|{"⭐️" * rate}{"❌" * (5-rate)}\n'
+    text += f'{review.body}\n\n<b>Advantages: </b>{review.advantages}\n<b>Disadvantages: </b>{review.disadvantages}'
+    return text

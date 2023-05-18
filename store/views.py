@@ -182,9 +182,10 @@ class VotesView(View):
     def post(self, request, pk):
         obj = self.model.objects.get(pk=pk)
         try:
-            like_dislike = LikeDislike.objects.get(content_type=ContentType.objects.get_for_model(obj),
-                                                   object_id=obj.id,
-                                                   user=request.user)
+            like_dislike = LikeDislike.objects.get(
+                content_type=ContentType.objects.get_for_model(obj),
+                object_id=obj.id, user=request.user
+            )
             if like_dislike.vote is not self.vote_type:
                 like_dislike.vote = self.vote_type
                 like_dislike.save(update_fields=['vote'])
