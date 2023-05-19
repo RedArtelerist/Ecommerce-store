@@ -6,7 +6,7 @@ from telegram_bot.utils import build_menu
 
 BUTTON1_CATEGORIES = "Categories"
 BUTTON2_CART = "Cart"
-BUTTON3_HELP = "Help"
+BUTTON3_REPORT = "Report"
 BUTTON4_ORDERS = "My orders"
 
 regions = get_regions()
@@ -15,7 +15,7 @@ regions = get_regions()
 def get_base_reply_keyboard():
     keyboard = [
         [KeyboardButton(BUTTON1_CATEGORIES), KeyboardButton(BUTTON2_CART)],
-        [KeyboardButton(BUTTON4_ORDERS), KeyboardButton(BUTTON3_HELP)],
+        [KeyboardButton(BUTTON4_ORDERS), KeyboardButton(BUTTON3_REPORT)],
     ]
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 

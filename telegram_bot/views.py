@@ -82,7 +82,7 @@ def button_callback_handler(update: Update, context: CallbackContext):
 
 
 @debug_requests
-def do_help(update: Update, context: CallbackContext):
+def report_handler(update: Update, context: CallbackContext):
     update.message.reply_text(
         text="This is bot for online shopping\n\n"
              "The list of available commands is in the menu\n\n"
@@ -98,8 +98,8 @@ def echo_handler(update: Update, context: CallbackContext):
         categories_handler(update, context)
     elif text == BUTTON2_CART:
         get_cart_handler(update, context)
-    elif text == BUTTON3_HELP:
-        return do_help(update, context)
+    elif text == BUTTON3_REPORT:
+        return report_handler(update, context)
     elif text == BUTTON4_ORDERS:
         return user_orders_list_handler(update, context)
     else:
@@ -149,6 +149,7 @@ dispatcher.add_handler(CommandHandler('start', start_handler))
 dispatcher.add_handler(CommandHandler('categories', categories_handler))
 dispatcher.add_handler(CommandHandler('cart', get_cart_handler))
 dispatcher.add_handler(CommandHandler('orders', user_orders_list_handler))
+dispatcher.add_handler(CommandHandler('report', report_handler))
 dispatcher.add_handler(CallbackQueryHandler(button_callback_handler))
 dispatcher.add_handler(MessageHandler(Filters.all, echo_handler))
 
