@@ -70,10 +70,11 @@ def product_detail_handler(update: Update, id: int, context: CallbackContext):
 
     detail = f'<b>{product.name}</b>\n\n<b>Specs:</b>\n<i>{product.shortSpecifications}</i>\n\n'
     price = f'<code>₴{product.discount_price}</code>'
+    rate = f'⭐️: {product.rate}/5\n'
     if product.discount:
         price = f'<s>₴{product.price}</s> {price}'
 
-    caption = detail + f'<b>Price:</b> {price}'
+    caption = detail + rate + f'<b>Price:</b> {price}'
     photo_url = product.imageURL
 
     button_list = [
